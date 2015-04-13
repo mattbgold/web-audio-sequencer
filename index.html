@@ -3,12 +3,17 @@
 <head>
 <meta charset="UTF-8">
 <title>web sequencer</title>
+<link href="main.css" rel="stylesheet" type="text/css">
 </head>
 
 <body>
+<div class="roll" data-bind="foreach: tracks">
+<div class="track" data-bind="click: trackClicked"></div>
+</div>
 
 <script src="Scripts/bufferLoader.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
+<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.1.0.js"></script>
 <script>
 	var context;
 
@@ -21,7 +26,7 @@
 			alert('Web Audio API is not supported in this browser');
 		}
 		
-		var file = prompt('Paste a link to a sound file');
+		/* var file = prompt('Paste a link to a sound file');
 		
 		bufferLoader = new BufferLoader( context, [file], function(bufferList) {
 			var source1 = context.createBufferSource();
@@ -30,8 +35,47 @@
 			source1.start(0);
 		});
 
-		bufferLoader.load();
+		bufferLoader.load();*/ 
 	});
+	
+	var ViewModel = function() {
+		var self = this;
+		self.gridResolution = ko.observable(2);
+		self.zoomLevel = ko.observable(1);
+		
+		self.gridBaseWidth = ko.computed(function(){
+			return 20*self.zoomLevel();
+		});
+		self.gridCellWidth = ko.computed(function() {
+			var w = self.gridResolution()*self.gridBaseWidth();
+			return w;
+		});
+		
+		self.tracks = [];
+		
+		for(var i=0; i< 10; i++) {
+			self.tracks.push({ num: i });
+		}
+	};
+	 
+	var noteClicked = function(e) {
+		//TODO: Right click to erase note
+	};
+	
+	var trackClicked = function(data, event) {
+		var $track = $(event.target);
+		var offset = $track.offset();
+		var trackClickX = event.clientX - offset.left;
+		var trackClickXSnap = Math.floor(trackClickX / viewModel.gridCellWidth()) * viewModel.gridCellWidth();
+
+		//TODO: add note to notes observable array instead. have knockout put them into the DOM    
+		var $newNote = $('<div class="note"></div>').css('width', viewModel.gridCellWidth() + 'px').css('left', trackClickXSnap + 'px');
+		$newNote.click(noteClicked);
+		$track.append($newNote);
+	};
+	
+	var viewModel = new ViewModel();
+	ko.applyBindings(viewModel);
 </script>
 </body>
 </html>
