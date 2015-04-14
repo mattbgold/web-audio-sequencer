@@ -102,6 +102,9 @@
 	};
 
 	var trackClicked = function(data, event) {
+		if(event.which !== 1) {
+			return false;
+		}
 		var $track = $(event.target);
 		var offset = $track.offset();
 		var trackClickX = event.clientX - offset.left;
