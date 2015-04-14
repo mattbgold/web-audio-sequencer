@@ -14,7 +14,7 @@
 	<div class="track" data-bind="event: { mousedown: trackClicked }, css: $root.trackZoomClass"></div>
 	<!-- /ko -->
 	<!-- ko foreach: notes -->
-	<div class="note" data-bind="event: { mousemove: viewModel.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: (len*$root.gridBaseWidth()).toString() +'px', left: (on*$root.gridBaseWidth()).toString() + 'px', top: (top*trackHeight).toString() + 'px' }"></div>
+	<div class="note" data-bind="event: { mousemove: $root.removeNote, mousedown: $root.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: (len*$root.gridBaseWidth()).toString() +'px', left: (on*$root.gridBaseWidth()).toString() + 'px', top: (top*trackHeight).toString() + 'px' }"></div>
 	<!-- /ko -->
 </div>
 
@@ -94,8 +94,8 @@
 			return 'track-' + self.zoomLevel();
 		});
 		
-		self.removeNote = function($data) {
-			if(mouseRight) {
+		self.removeNote = function($data, event) {
+			if(mouseRight || (event.type === 'mousedown' && event.which ===3)) {
 				self.notes.remove($data);
 			}
 		};
