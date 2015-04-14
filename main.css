@@ -1,12 +1,11 @@
 .roll {
-    margin:20px;
     border:1px solid black;
     box-sizing: border-box;
+	position: relative;
 }
 .track{
     padding:0;
     margin:0;
-    position:relative;
     height:20px;
     border-bottom:1px solid black;
     box-sizing: border-box;
@@ -35,4 +34,32 @@
     height:19px;
     background-color:#AFA;
     z-index:1;
+}
+
+
+.ui-resizable-handle {
+	position: absolute;
+	font-size: 0.1px;
+	display: block;
+	-ms-touch-action: none;
+	touch-action: none;
+}
+.ui-resizable-disabled .ui-resizable-handle,
+.ui-resizable-autohide .ui-resizable-handle {
+	display: none;
+}
+
+.ui-resizable-e {
+	cursor: e-resize;
+	width: 7px;
+	right: -5px;
+	top: 0;
+	height: 100%;
+}
+.ui-resizable-w {
+	cursor: w-resize;
+	width: 7px;
+	left: -5px;
+	top: 0;
+	height: 100%;
 }

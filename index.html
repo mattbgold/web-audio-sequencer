@@ -8,18 +8,24 @@
 
 <body>
 <div>Snap Width: <input type="range" min="0" max="4" data-bind="value: snapMode" /> Zoom:  <input type="range" min="1" max="4" data-bind="value: zoomLevel" /></div>
-<div class="roll" data-bind="foreach: tracks">
-	<div class="track" data-bind="click: trackClicked, css: $root.trackZoomClass, foreach: notes">
-		<div class="note" data-bind="style: { width: (len*$root.gridBaseWidth()).toString() +'px', left: (on*$root.gridBaseWidth()).toString() + 'px' }"></div>
-	</div>
+<div class="roll" oncontextmenu="return false;">
+	<!-- ko foreach: tracks -->
+	<div class="track" data-bind="click: trackClicked, css: $root.trackZoomClass"></div>
+	<!-- /ko -->
+	<!-- ko foreach: notes -->
+	<div class="note" data-bind="draggableGrid: $root.gridSnapWidth, style: { width: (len*$root.gridBaseWidth()).toString() +'px', left: (on*$root.gridBaseWidth()).toString() + 'px', top: (top*trackHeight).toString() + 'px' }"></div>
+	<!-- /ko -->
 </div>
+
+
 
 <script src="Scripts/bufferLoader.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
+<script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script>
 	var context;
-
+	trackHeight = 20;
 	$(function() {
 		try {
 			window.AudioContext = window.AudioContext || window.webkitAudioContext;
@@ -43,6 +49,7 @@
 	
 	var ViewModel = function() {
 		var self = this;
+		
 		self.snapMode = ko.observable(1);
 		self.gridResolution = ko.computed(function() {
 			return Math.pow(2, self.snapMode());
@@ -67,9 +74,10 @@
 		});
 		
 		self.tracks = [];
+		self.notes = ko.observableArray([]);
 		
 		for(var i=0; i< 20; i++) {
-			self.tracks.push({ num: i, notes: ko.observableArray([])});
+			self.tracks.push({ num: i});
 		}
 	};
 	 
@@ -83,13 +91,29 @@
 		var trackClickX = event.clientX - offset.left;
 		var trackXSnap = (Math.floor(trackClickX / viewModel.gridSnapWidth())*viewModel.gridSnapWidth())/viewModel.gridBaseWidth();
 
-		//TODO: add note to notes observable array instead. have knockout put them into the DOM 
-		var newNote = {on: trackXSnap, len: viewModel.gridResolution()};
-		data.notes.push(newNote);
-		
-		//var $newNote = $('<div class="note"></div>').css('width', viewModel.gridCellWidth() + 'px').css('left', trackClickXSnap + 'px');
-		//$newNote.click(noteClicked);
-		//$track.append($newNote);
+		var newNote = {on: trackXSnap, len: viewModel.gridResolution(), top: data.num};
+		viewModel.notes.push(newNote);
+	};
+	
+	ko.bindingHandlers.draggableGrid = {
+		init: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
+			var model = bindingContext.$root;
+			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], 
+				stop: function(e, ui) {
+					noteModel.on = ui.position.left/model.gridBaseWidth();
+					noteModel.top = ui.position.top/trackHeight;
+				}
+			});
+			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e',
+				stop: function(e, ui) {
+					noteModel.len = ui.size.width/model.gridBaseWidth();
+				}
+			});
+		},
+		update: function(element, valueAccessor, allBindings, viewModel) {
+			$(element).draggable("option", "grid", [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ]);
+			$(element).resizable("option", "grid", ko.utils.unwrapObservable(valueAccessor()));
+		}
 	};
 	
 	var viewModel = new ViewModel();
