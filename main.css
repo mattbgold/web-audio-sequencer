@@ -10,7 +10,18 @@
     height:20px;
     border-bottom:1px solid black;
     box-sizing: border-box;
-    background-image: url('Images/track.png')
+}
+.track-1 {
+	background-image: url('Images/track1.png')
+}
+.track-2 {
+	background-image: url('Images/track2.png')
+}
+.track-3 {
+	background-image: url('Images/track3.png')
+}
+.track-4 {
+	background-image: url('Images/track4.png')
 }
 .track:hover {
     border-top: 1px solid #AAA;

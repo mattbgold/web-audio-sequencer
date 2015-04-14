@@ -7,13 +7,16 @@
 </head>
 
 <body>
+<div>Snap Width: <input type="range" min="0" max="4" data-bind="value: snapMode" /> Zoom:  <input type="range" min="1" max="4" data-bind="value: zoomLevel" /></div>
 <div class="roll" data-bind="foreach: tracks">
-<div class="track" data-bind="click: trackClicked"></div>
+	<div class="track" data-bind="click: trackClicked, css: $root.trackZoomClass, foreach: notes">
+		<div class="note" data-bind="style: { width: (len*$root.gridBaseWidth()).toString() +'px', left: (on*$root.gridBaseWidth()).toString() + 'px' }"></div>
+	</div>
 </div>
 
 <script src="Scripts/bufferLoader.js"></script>
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
-<script src="http://ajax.aspnetcdn.com/ajax/knockout/knockout-3.1.0.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
 <script>
 	var context;
 
@@ -40,21 +43,33 @@
 	
 	var ViewModel = function() {
 		var self = this;
-		self.gridResolution = ko.observable(2);
-		self.zoomLevel = ko.observable(1);
-		
-		self.gridBaseWidth = ko.computed(function(){
-			return 20*self.zoomLevel();
+		self.snapMode = ko.observable(1);
+		self.gridResolution = ko.computed(function() {
+			return Math.pow(2, self.snapMode());
 		});
-		self.gridCellWidth = ko.computed(function() {
-			var w = self.gridResolution()*self.gridBaseWidth();
+		self.zoomLevel = ko.observable(3);
+		
+		//quarter note width. need to make this smallest possible length
+		self.gridBaseWidth = ko.computed(function(){
+			var w = 40;
+			for(var i = 1; i < (5-self.zoomLevel()); i++) {
+				w/=2;
+			}
 			return w;
+		});
+		
+		self.gridSnapWidth = ko.computed(function() {
+			return self.gridResolution()*self.gridBaseWidth();
+		});
+		
+		self.trackZoomClass = ko.pureComputed(function() {
+			return 'track-' + self.zoomLevel();
 		});
 		
 		self.tracks = [];
 		
 		for(var i=0; i< 20; i++) {
-			self.tracks.push({ num: i });
+			self.tracks.push({ num: i, notes: ko.observableArray([])});
 		}
 	};
 	 
@@ -66,12 +81,15 @@
 		var $track = $(event.target);
 		var offset = $track.offset();
 		var trackClickX = event.clientX - offset.left;
-		var trackClickXSnap = Math.floor(trackClickX / viewModel.gridCellWidth()) * viewModel.gridCellWidth();
+		var trackXSnap = (Math.floor(trackClickX / viewModel.gridSnapWidth())*viewModel.gridSnapWidth())/viewModel.gridBaseWidth();
 
-		//TODO: add note to notes observable array instead. have knockout put them into the DOM    
-		var $newNote = $('<div class="note"></div>').css('width', viewModel.gridCellWidth() + 'px').css('left', trackClickXSnap + 'px');
-		$newNote.click(noteClicked);
-		$track.append($newNote);
+		//TODO: add note to notes observable array instead. have knockout put them into the DOM 
+		var newNote = {on: trackXSnap, len: viewModel.gridResolution()};
+		data.notes.push(newNote);
+		
+		//var $newNote = $('<div class="note"></div>').css('width', viewModel.gridCellWidth() + 'px').css('left', trackClickXSnap + 'px');
+		//$newNote.click(noteClicked);
+		//$track.append($newNote);
 	};
 	
 	var viewModel = new ViewModel();
