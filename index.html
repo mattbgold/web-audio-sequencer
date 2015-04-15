@@ -14,6 +14,7 @@
 	<div class="track" data-bind="event: { mousedown: trackClicked }, css: $root.trackZoomClass"></div>
 	<!-- /ko -->
 	<!-- ko foreach: notes -->
+		<!-- TODO: Move all of this note-specific stuff into the draggableGrid binding -->
 	<div class="note" data-bind="event: { mousemove: $root.removeNote, mousedown: $root.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: len*$root.gridBaseWidth() +'px', left: on*$root.gridBaseWidth() + 'px', top: top*trackHeight + 'px' }"></div>
 	<!-- /ko -->
 </div>
@@ -113,7 +114,7 @@
 		var newNote = {on: trackXSnap, len: viewModel.gridResolution(), top: data.num};
 		viewModel.notes.push(newNote);
 		
-		//retrigger event to start dragging
+		//retrigger event to start dragging as soon as note is created
 		setTimeout(function(){if(mouseLeft){$('.note').last().trigger(event);}}, 100);
 	};
 	
@@ -124,6 +125,12 @@
 				stop: function(e, ui) {
 					noteModel.on = ui.position.left/model.gridBaseWidth();
 					noteModel.top = ui.position.top/trackHeight;
+					var overlappedNote = $.grep(model.notes(), function(n,i) {
+						return n.on == noteModel.on;
+					});
+					if(overlappedNote.length > 1) {
+						model.notes.remove(overlappedNote[0]);
+					}
 				}
 			});
 			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent", 
