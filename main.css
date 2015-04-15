@@ -35,7 +35,10 @@
     background-color:#AFA;
     z-index:1;
 }
-
+.note.ui-draggable-dragging {
+	border-width: 2px;
+	z-index: 2;
+}
 
 .ui-resizable-handle {
 	position: absolute;
