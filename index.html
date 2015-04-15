@@ -120,13 +120,13 @@
 	ko.bindingHandlers.draggableGrid = {
 		init: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
 			var model = bindingContext.$root;
-			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], 
+			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
 				stop: function(e, ui) {
 					noteModel.on = ui.position.left/model.gridBaseWidth();
 					noteModel.top = ui.position.top/trackHeight;
 				}
 			});
-			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e',
+			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent", 
 				stop: function(e, ui) {
 					noteModel.len = ui.size.width/model.gridBaseWidth();
 				}
