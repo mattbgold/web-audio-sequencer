@@ -14,7 +14,7 @@
 	<div class="track" data-bind="event: { mousedown: trackClicked }, css: $root.trackZoomClass"></div>
 	<!-- /ko -->
 	<!-- ko foreach: notes -->
-	<div class="note" data-bind="event: { mousemove: $root.removeNote, mousedown: $root.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: (len*$root.gridBaseWidth()-1) +'px', left: (on*$root.gridBaseWidth()) + 'px', top: (top*trackHeight)-1 + 'px' }"></div>
+	<div class="note" data-bind="event: { mousemove: $root.removeNote, mousedown: $root.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: len*$root.gridBaseWidth() +'px', left: on*$root.gridBaseWidth() + 'px', top: top*trackHeight + 'px' }"></div>
 	<!-- /ko -->
 </div>
 
@@ -129,6 +129,7 @@
 			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent", 
 				stop: function(e, ui) {
 					noteModel.len = ui.size.width/model.gridBaseWidth();
+					$(ui.helper).width($(ui.helper).width() + 2); //hack to fix bug in jqueryUI resizable
 				}
 			});
 			
