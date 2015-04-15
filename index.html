@@ -14,7 +14,7 @@
 	<div class="track" data-bind="event: { mousedown: trackClicked }, css: $root.trackZoomClass"></div>
 	<!-- /ko -->
 	<!-- ko foreach: notes -->
-	<div class="note" data-bind="event: { mousemove: $root.removeNote, mousedown: $root.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: (len*$root.gridBaseWidth()).toString() +'px', left: (on*$root.gridBaseWidth()).toString() + 'px', top: (top*trackHeight).toString() + 'px' }"></div>
+	<div class="note" data-bind="event: { mousemove: $root.removeNote, mousedown: $root.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: (len*$root.gridBaseWidth()-1) +'px', left: (on*$root.gridBaseWidth()) + 'px', top: (top*trackHeight)-1 + 'px' }"></div>
 	<!-- /ko -->
 </div>
 
