@@ -7,48 +7,42 @@
 </head>
 
 <body>
-<div>Snap Width: <input type="range" min="0" max="4" data-bind="value: snapMode" /> Zoom:  <input type="range" min="1" max="4" data-bind="value: zoomLevel" /></div>
-
+<div>Snap Width: <span data-bind="text:gridSnapWidth"></span><input type="range" min="0" max="4" data-bind="value: snapMode" /> Zoom: <span data-bind="text:zoomLevel"></span> <input type="range" min="1" max="4" data-bind="value: zoomLevel" /></div>
+<div>BPM: <input type="text" data-bind="value: bpm"/><button type="button" data-bind="click: play, enable: loaded">Play</button><button type="button" data-bind="click: stop">Stop</button> </div>
 <div class="roll" oncontextmenu="return false;">
 	<!-- ko foreach: tracks -->
-	<div class="track" data-bind="event: { mousedown: trackClicked }, css: $root.trackZoomClass"></div>
+	<div class="track" data-bind="event: { mousedown: trackClicked }, css: $root.trackZoomClass, text: $data.noteText()"></div>
 	<!-- /ko -->
 	<!-- ko foreach: notes -->
-		<!-- TODO: Move all of this note-specific stuff into the draggableGrid binding -->
-	<div class="note" data-bind="event: { mousemove: $root.removeNote, mousedown: $root.removeNote }, draggableGrid: $root.gridSnapWidth, style: { width: len*$root.gridBaseWidth() +'px', left: on*$root.gridBaseWidth() + 'px', top: top*trackHeight + 'px' }"></div>
+	<div class="note" data-bind="gridNote: $root.gridSnapWidth"></div>
 	<!-- /ko -->
 </div>
 
 
 
-<script src="Scripts/bufferLoader.js"></script>
+<!-- polyfill -->
+<script src="./inc/shim/Base64.js" type="text/javascript"></script>
+<script src="./inc/shim/Base64binary.js" type="text/javascript"></script>
+<script src="./inc/shim/WebAudioAPI.js" type="text/javascript"></script>
+<!-- midi.js package -->
+<script src="./js/midi/audioDetect.js" type="text/javascript"></script>
+<script src="./js/midi/gm.js" type="text/javascript"></script>
+<script src="./js/midi/loader.js" type="text/javascript"></script>
+<script src="./js/midi/plugin.audiotag.js" type="text/javascript"></script>
+<script src="./js/midi/plugin.webaudio.js" type="text/javascript"></script>
+<script src="./js/midi/plugin.webmidi.js" type="text/javascript"></script>
+<!-- utils -->
+<script src="./js/util/dom_request_xhr.js" type="text/javascript"></script>
+<script src="./js/util/dom_request_script.js" type="text/javascript"></script>
+
 <script src="https://code.jquery.com/jquery-2.1.3.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 <script>
-	var context;
-	trackHeight = 20;
-	mouseRight = false;
+	var trackHeight = 20;
+	var mouseRight = false;
+	var mouseLeft = false;
 	$(function() {
-		try {
-			window.AudioContext = window.AudioContext || window.webkitAudioContext;
-			context = new AudioContext();
-		}
-		catch(e) {
-			alert('Web Audio API is not supported in this browser');
-		}
-		
-		/* var file = prompt('Paste a link to a sound file');
-		
-		bufferLoader = new BufferLoader( context, [file], function(bufferList) {
-			var source1 = context.createBufferSource();
-			source1.buffer = bufferList[0];
-			source1.connect(context.destination);
-			source1.start(0);
-		});
-
-		bufferLoader.load();*/ 
-		
 		$(document).mousedown(function(e){
 			// Left mouse button was pressed, set flag
 			if(e.which === 3) mouseRight = true;
@@ -59,19 +53,32 @@
 			if(e.which === 3) mouseRight = false;
 			if(e.which === 1) mouseLeft = false;
 		});
+		
+		MIDI.loadPlugin({
+			soundfontUrl: "./soundfont/",
+			instrument: "acoustic_grand_piano",
+			onprogress: function(state, progress) {
+				console.log(state, progress);
+			},
+			onsuccess: function() {
+				viewModel.loaded(true);
+			}
+		});
 	});
 	
 	var ViewModel = function() {
 		var self = this;
 		
+		self.baseNotesToMakeQuarterNote = 2; //TODO: base zoom / grid resolution off of this.
+		self.loaded = ko.observable(false);
 		self.snapMode = ko.observable(1);
-		self.gridResolution = ko.computed(function() {
+		self.gridResolution = ko.pureComputed(function() {
 			return Math.pow(2, self.snapMode());
 		});
 		self.zoomLevel = ko.observable(3);
 		
 		//quarter note width. need to make this smallest possible length
-		self.gridBaseWidth = ko.computed(function(){
+		self.gridBaseWidth = ko.pureComputed(function(){
 			var w = 40;
 			for(var i = 1; i < (5-self.zoomLevel()); i++) {
 				w/=2;
@@ -79,15 +86,21 @@
 			return w;
 		});
 		
-		self.gridSnapWidth = ko.computed(function() {
+		self.gridSnapWidth = ko.pureComputed(function() {
 			return self.gridResolution()*self.gridBaseWidth();
 		});
 		
+		self.bpmScale = ko.pureComputed(function() {
+			var bps = (self.bpm()/60); //quarter notes per second
+			return bps*self.baseNotesToMakeQuarterNote; // base notes per second
+		});
+		
+		self.bpm = ko.observable(120);
 		self.tracks = [];
 		self.notes = ko.observableArray([]);
-		
-		for(var i=0; i< 20; i++) {
-			self.tracks.push({ num: i});
+
+		for(var i=0; i< 88; i++) {
+			self.tracks.push(new Track(i));
 		}
 		
 		// functions
@@ -100,8 +113,47 @@
 				self.notes.remove($data);
 			}
 		};
+		
+		self.play = function() {
+			//21 = A0, 108 = Gb7
+			var velocity = 127; // how hard the note hits
+			MIDI.setVolume(0, 127);
+			ko.utils.arrayForEach(self.notes(), function(note) {
+				//MIDI.noteOn(0, (108 - note.top), velocity, note.on/self.bpmScale());
+				//MIDI.noteOff(0, (108 - note.top), (note.on + note.len)/self.bpmScale());
+				note.play();
+			});
+		};
+		
+		self.stop = function() {
+			MIDI.stopAllNotes();
+		};
 	};
-
+	
+	var Track = function(num) {
+		var self = this;
+		
+		self.num = num;
+		self.noteText = function(){
+			return MIDI.noteToKey[108-self.num];
+		};
+	};
+	
+	var Note = function(top, on, len) {
+		var self = this;
+		
+		self.on = on;
+		self.len = len;
+		self.top = top;
+		
+		self.play = function(playNow) {
+			var velocity = 127;
+			MIDI.noteOn(0, (108 - self.top), velocity, playNow ? 0 : self.on/viewModel.bpmScale());
+			MIDI.noteOff(0, (108 - self.top), playNow ? .25 : (self.on + self.len)/viewModel.bpmScale());
+		};
+		self.play(true);
+	};
+	
 	var trackClicked = function(data, event) {
 		if(event.which !== 1) {
 			return false;
@@ -111,39 +163,55 @@
 		var trackClickX = event.clientX - offset.left;
 		var trackXSnap = (Math.floor(trackClickX / viewModel.gridSnapWidth())*viewModel.gridSnapWidth())/viewModel.gridBaseWidth();
 
-		var newNote = {on: trackXSnap, len: viewModel.gridResolution(), top: data.num};
+		var newNote = new Note(data.num, trackXSnap, viewModel.gridResolution());
 		viewModel.notes.push(newNote);
 		
 		//retrigger event to start dragging as soon as note is created
 		setTimeout(function(){if(mouseLeft){$('.note').last().trigger(event);}}, 100);
 	};
 	
-	ko.bindingHandlers.draggableGrid = {
+	ko.bindingHandlers.gridNote= {
 		init: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
 			var model = bindingContext.$root;
+			
+			$(element).on('mousedown', function(e) {model.removeNote(noteModel, e);}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
+			
 			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
 				stop: function(e, ui) {
-					noteModel.on = ui.position.left/model.gridBaseWidth();
-					noteModel.top = ui.position.top/trackHeight;
+					// this math rounding is a hack to fix jquery ui bugs
+					var fixedLeft = Math.round(ui.position.left/model.gridBaseWidth());
+					var fixedTop = Math.round(ui.position.top/trackHeight);
+					$(ui.helper).css('left', fixedLeft*model.gridBaseWidth() + 'px');
+					$(ui.helper).css('top', fixedTop*trackHeight + 'px');
+					
 					var overlappedNote = $.grep(model.notes(), function(n,i) {
-						return n.on == noteModel.on;
+						return (n!=noteModel && n.on == fixedLeft && n.top == fixedTop);
 					});
-					if(overlappedNote.length > 1) {
+					if(overlappedNote.length > 0) {
 						model.notes.remove(overlappedNote[0]);
 					}
+					noteModel.on = fixedLeft;
+					noteModel.top = fixedTop;
+					noteModel.play(true);
+				}, drag: function(e, ui) {
+					//noteModel.play(true);
 				}
 			});
 			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent", 
 				stop: function(e, ui) {
-					noteModel.len = ui.size.width/model.gridBaseWidth();
-					$(ui.helper).width($(ui.helper).width() + 2); //hack to fix bug in jqueryUI resizable
+					var fixedLength = Math.round(ui.size.width/model.gridBaseWidth());
+					noteModel.len = fixedLength;
+					$(ui.helper).css('width', fixedLength * model.gridBaseWidth() + 'px'); //hack to fix bug in jqueryUI resizable
 				}
 			});
 			
 		},
-		update: function(element, valueAccessor, allBindings, viewModel) {
+		update: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
+			var model = bindingContext.$root;
 			$(element).draggable("option", "grid", [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ]);
 			$(element).resizable("option", "grid", ko.utils.unwrapObservable(valueAccessor()));
+			
+			$(element).css('width', noteModel.len*model.gridBaseWidth() + 'px').css('left', noteModel.on*model.gridBaseWidth()+'px').css('top', noteModel.top*trackHeight +'px');
 		}
 	};
 	
