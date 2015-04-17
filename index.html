@@ -7,7 +7,7 @@
 </head>
 
 <body>
-<div>Snap Width: <span data-bind="text:gridSnapWidth"></span><input type="range" min="0" max="4" data-bind="value: snapMode" /> Zoom: <span data-bind="text:zoomLevel"></span> <input type="range" min="1" max="4" data-bind="value: zoomLevel" /></div>
+<div>Snap Width: <span data-bind="text:snapLengthText"></span><input type="range" min="0" max="4" data-bind="value: snapMode" /> Zoom: <span data-bind="text:zoomLevel"></span> <input type="range" min="1" max="5" data-bind="value: zoomLevel" /></div>
 <div>BPM: <input type="text" data-bind="value: bpm"/><button type="button" data-bind="click: play, enable: loaded">Play</button><button type="button" data-bind="click: stop">Stop</button> </div>
 <div class="roll" oncontextmenu="return false;">
 	<!-- ko foreach: tracks -->
@@ -42,6 +42,7 @@
 	var trackHeight = 20;
 	var mouseRight = false;
 	var mouseLeft = false;
+	dp=false;
 	$(function() {
 		$(document).mousedown(function(e){
 			// Left mouse button was pressed, set flag
@@ -69,25 +70,27 @@
 	var ViewModel = function() {
 		var self = this;
 		
-		self.baseNotesToMakeQuarterNote = 2; //TODO: base zoom / grid resolution off of this.
+		self.widthOfQuarterNoteAtNoZoom = 10;
+		self.baseNotesToMakeQuarterNote = 8; //defines smallest possible note. value of 8 means 32nd note
 		self.loaded = ko.observable(false);
-		self.snapMode = ko.observable(1);
+		self.snapMode = ko.observable(2);
 		self.gridResolution = ko.pureComputed(function() {
 			return Math.pow(2, self.snapMode());
 		});
-		self.zoomLevel = ko.observable(3);
+		self.zoomLevel = ko.observable(4);
 		
-		//quarter note width. need to make this smallest possible length
+		//current width in pixels of smallest possible note
 		self.gridBaseWidth = ko.pureComputed(function(){
-			var w = 40;
-			for(var i = 1; i < (5-self.zoomLevel()); i++) {
-				w/=2;
-			}
-			return w;
+			var widthOfBaseNote = self.widthOfQuarterNoteAtNoZoom/self.baseNotesToMakeQuarterNote;
+			return widthOfBaseNote*Math.pow(2, self.zoomLevel()-1);
 		});
 		
 		self.gridSnapWidth = ko.pureComputed(function() {
 			return self.gridResolution()*self.gridBaseWidth();
+		});
+		
+		self.snapLengthText = ko.pureComputed(function() {
+			return '1/'+(self.baseNotesToMakeQuarterNote*4*self.gridBaseWidth()/self.gridSnapWidth())
 		});
 		
 		self.bpmScale = ko.pureComputed(function() {
@@ -119,8 +122,6 @@
 			var velocity = 127; // how hard the note hits
 			MIDI.setVolume(0, 127);
 			ko.utils.arrayForEach(self.notes(), function(note) {
-				//MIDI.noteOn(0, (108 - note.top), velocity, note.on/self.bpmScale());
-				//MIDI.noteOff(0, (108 - note.top), (note.on + note.len)/self.bpmScale());
 				note.play();
 			});
 		};
@@ -145,13 +146,13 @@
 		self.on = on;
 		self.len = len;
 		self.top = top;
+		self.prevTop = null;
 		
 		self.play = function(playNow) {
 			var velocity = 127;
 			MIDI.noteOn(0, (108 - self.top), velocity, playNow ? 0 : self.on/viewModel.bpmScale());
-			MIDI.noteOff(0, (108 - self.top), playNow ? .25 : (self.on + self.len)/viewModel.bpmScale());
+			MIDI.noteOff(0, (108 - self.top), playNow ? .1 : (self.on + self.len)/viewModel.bpmScale());
 		};
-		self.play(true);
 	};
 	
 	var trackClicked = function(data, event) {
@@ -164,19 +165,30 @@
 		var trackXSnap = (Math.floor(trackClickX / viewModel.gridSnapWidth())*viewModel.gridSnapWidth())/viewModel.gridBaseWidth();
 
 		var newNote = new Note(data.num, trackXSnap, viewModel.gridResolution());
+		newNote.play(true);
 		viewModel.notes.push(newNote);
 		
 		//retrigger event to start dragging as soon as note is created
-		setTimeout(function(){if(mouseLeft){$('.note').last().trigger(event);}}, 100);
+		setTimeout(function(){if(mouseLeft){dp=true;$('.note').last().trigger(event);}}, 100);
 	};
 	
 	ko.bindingHandlers.gridNote= {
 		init: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
 			var model = bindingContext.$root;
 			
-			$(element).on('mousedown', function(e) {model.removeNote(noteModel, e);}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
+			$(element).on('mousedown', function(e) {model.removeNote(noteModel, e); if(e.which===1 && dp===false){noteModel.play(true); }dp=false;}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
 			
 			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
+				drag: function(event, ui) {
+					if(ui.helper.css('top') != noteModel.prevTop) {
+						var fixedTop = Math.round(ui.position.top/trackHeight);
+						if(noteModel.top !== fixedTop) {
+							noteModel.top = fixedTop;
+							noteModel.play(true);
+						}
+						noteModel.prevTop = ui.helper.css('top');
+					}
+				},
 				stop: function(e, ui) {
 					// this math rounding is a hack to fix jquery ui bugs
 					var fixedLeft = Math.round(ui.position.left/model.gridBaseWidth());
@@ -192,9 +204,6 @@
 					}
 					noteModel.on = fixedLeft;
 					noteModel.top = fixedTop;
-					noteModel.play(true);
-				}, drag: function(e, ui) {
-					//noteModel.play(true);
 				}
 			});
 			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent", 

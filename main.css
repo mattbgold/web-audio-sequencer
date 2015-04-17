@@ -22,6 +22,9 @@
 .track-4 {
 	background-image: url('Images/track4.png')
 }
+.track-5 {
+	background-image: url('Images/track5.png')
+}
 .track:hover {
     border-top: 1px solid #AAA;
     border-bottom: 1px solid #AAA;
