@@ -6,7 +6,14 @@
 			var model = bindingContext.$root;
 			
 			//play note on mousedown, but not on the draggable trigger
-			$(element).on('mousedown', function(e) {model.removeNote(noteModel, e); if(e.which===1 && dp===false){noteModel.play(true); }dp=false;}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
+			$(element).on('mousedown', function(e) { 
+				model.removeNote(noteModel, e); 
+				if(e.which===1 && dp===false){
+					noteModel.play(true); 
+				}
+				dp=false;
+				model.affectSelection([noteModel]);
+			}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
 			
 			//make the note draggable within the piano roll
 			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
@@ -50,7 +57,7 @@
 			});
 			
 		},
-		
+
 		//adapt to zoom
 		update: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
 			var model = bindingContext.$root;

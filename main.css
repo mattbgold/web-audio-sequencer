@@ -2,6 +2,24 @@
     border:1px solid black;
     box-sizing: border-box;
 	position: relative;
+	margin-left:100px;
+}
+.roll.is-cursor-select {
+	cursor: context-menu;
+}
+.roll.is-cursor-add {
+	cursor: copy;
+}
+.roll.is-cursor-subtract {
+	cursor: alias;
+}
+.keys {
+	background-image:url('Images/keys.jpg');
+	background-repeat:repeat-y;
+	background-position: 0px 20px;
+	height:1760px;
+	width:100px;
+	position:absolute;
 }
 .track{
     padding:0;
@@ -37,6 +55,7 @@
     height:19px;
     background-color:#AFA;
     z-index:1;
+    opacity:.9;
 }
 .note.is-note-selected {
 	border-color:Green;

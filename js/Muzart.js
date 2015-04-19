@@ -22,6 +22,13 @@ var Muzart;
 		
 		self.isSelected = ko.observable(false);
 
+		self.clone = function() {
+			var note = new Muzart.Note(self.top, self.on, self.len);
+			note.prevTop = self.prevTop;
+			note.isSelected(self.isSelected());
+			return note;
+		};
+
 //TODO: move this function outta here or pass in the bpmScale reference
 // Oooor, make it only possible to play note now, and move the timing into my code.
 		self.play = function(playNow) {

@@ -44,6 +44,7 @@ var Muzart;
 			});
 		});
 
+		self.copyBuffer = [];
 
 
 		for(var i=0; i< 88; i++) {
@@ -62,8 +63,8 @@ var Muzart;
 
 			var newNote = new Muzart.Note(data.num, trackXSnap, self.gridResolution());
 			newNote.play(true);
-			self.deselectAll();
-			newNote.isSelected(true);
+			//self.deselectAll();
+			//newNote.isSelected(true);
 
 			self.notes.push(newNote);
 			
@@ -71,10 +72,29 @@ var Muzart;
 			setTimeout(function(){if(mouseLeft){dp=true;$('.note').last().trigger(event);}}, 100);
 		};
 
+		self.noteClicked = function() {
+			//TODO: put logic for add/remove/reset selection here
+
+		};
+
 		self.trackZoomClass = ko.pureComputed(function() {
 			return 'track-' + self.zoomLevel();
 		});
-		
+		self.actionCursor = ko.pureComputed(function() {
+			var cls = '';
+			if(inputs.ctrl() && inputs.alt()) {
+				return 'is-cursor-subtract';
+			}
+			else if(inputs.ctrl() && inputs.shift()) {
+				return 'is-cursor-add';
+			}
+			else if(inputs.ctrl()) {
+				return 'is-cursor-select';
+			}
+			else return '';
+			
+		});
+
 		self.removeNote = function($data, event) {
 			if(mouseRight || (event.type === 'mousedown' && event.which ===3)) {
 				self.notes.remove($data);
@@ -83,6 +103,11 @@ var Muzart;
 		self.deselectAll = function() {
 			$.each(self.notes(), function(i,note) {
 				note.isSelected(false);
+			});
+		};
+		self.selectAll = function() {
+			$.each(self.notes(), function(i,note) {
+				note.isSelected(true);
 			});
 		};
 		self.play = function() {
@@ -96,6 +121,41 @@ var Muzart;
 		
 		self.stop = function() {
 			MIDI.stopAllNotes();
+		};
+
+		self.affectSelection = function(notes) {
+			//add, remove, notes from selection using inputs to determine
+			$.each(notes, function(i, note) {
+				if(inputs.ctrl() && inputs.alt()) {
+					note.isSelected(false);
+				}
+				else if (inputs.ctrl() && inputs.shift()) {
+					note.isSelected(true);
+				}
+				else if(inputs.ctrl()) {
+					self.deselectAll();
+					note.isSelected(true);
+				}
+			});
+		};
+
+		self.deleteSelection = function() {
+			$.each(self.selectedNotes(), function(i, note) {
+				self.notes.remove(note);
+			});
+			return false;
+		};
+
+		self.copySelection = function() {
+			$.each(self.selectedNotes(), function(i, note) {
+				self.copyBuffer.push(note.clone());
+			});
+		};
+
+		self.pasteSelection = function() {
+			$.each(self.copyBuffer, function(i, note) {
+				self.notes.push(ko.toJS(note));
+			});
 		};
 	};
 

@@ -11,9 +11,10 @@
 <div>BPM: <input type="text" data-bind="value: bpm"/><button type="button" data-bind="click: play, enable: loaded">Play</button><button type="button" data-bind="click: stop">Stop</button> 
 </div>
 
-<div class="roll" oncontextmenu="return false;">
+<div class="keys"></div>
+<div class="roll" oncontextmenu="return false;" data-bind="css: actionCursor">
 	<!-- ko foreach: tracks -->
-	<div class="track" data-bind="event: { mousedown: $root.trackClicked }, css: $root.trackZoomClass, text: $data.noteText()"></div>
+	<div class="track" data-bind="event: { mousedown: $root.trackClicked }, css: $root.trackZoomClass"></div>
 	<!-- /ko -->
 	<!-- ko foreach: notes -->
 	<div class="note" data-bind="gridNote: $root.gridSnapWidth, css: { 'is-note-selected': isSelected }"></div>
@@ -39,6 +40,8 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/knockout/3.3.0/knockout-min.js"></script>
 <script src="https://code.jquery.com/ui/1.11.4/jquery-ui.min.js"></script>
 
+<script src="./js/jquery.hotkeys.js"></script>
+
 <script src="./js/Muzart.js"></script>
 <script src="./js/PianoRollModel.js"></script>
 <script src="./js/BindingHandlers.js"></script>
@@ -46,6 +49,11 @@
 	var trackHeight = 20;
 	var mouseRight = false;
 	var mouseLeft = false;
+	var inputs = {
+		ctrl: ko.observable(false),
+		shift: ko.observable(false),
+		alt: ko.observable(false)
+	};
 	dp=false;
 
 	//TODO: move all piano roll stuff into Piano roll component
@@ -58,7 +66,17 @@
 			if(e.which === 3) mouseRight = false;
 			if(e.which === 1) mouseLeft = false;
 		});
-		
+		$(document).on('keyup keydown', function(e){ inputs.shift(e.shiftKey);});
+		$(document).on('keyup keydown', function(e){ inputs.ctrl(e.ctrlKey);});
+		$(document).on('keyup keydown', function(e){ inputs.alt(e.altKey);});
+		//TODO: use this plugin to implement copy/paste/delete/ and more
+		$(document).bind('keydown', 'ctrl+a', viewModel.selectAll);
+		$(document).bind('keydown', 'ctrl+d', viewModel.deselectAll);
+		$(document).bind('keydown', 'delete', viewModel.deleteSelection);
+		$(document).bind('keydown', 'backspace', viewModel.deleteSelection);
+		$(document).bind('keydown', 'ctrl+c', viewModel.copySelection);
+		$(document).bind('keydown', 'ctrl+v', viewModel.pasteSelection);
+
 		MIDI.loadPlugin({
 			soundfontUrl: "./soundfont/",
 			instrument: "acoustic_grand_piano",
