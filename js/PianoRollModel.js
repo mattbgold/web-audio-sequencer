@@ -147,6 +147,7 @@ var Muzart;
 		};
 
 		self.copySelection = function() {
+			self.copyBuffer = [];
 			$.each(self.selectedNotes(), function(i, note) {
 				self.copyBuffer.push(note.clone());
 			});
