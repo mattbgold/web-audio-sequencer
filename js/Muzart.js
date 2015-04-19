@@ -20,6 +20,9 @@ var Muzart;
 		self.top = top;
 		self.prevTop = null;
 		
+		self.isSelected = ko.observable(false);
+
+//TODO: move this function outta here or pass in the bpmScale reference
 		self.play = function(playNow) {
 			var velocity = 127;
 			MIDI.noteOn(0, (108 - self.top), velocity, playNow ? 0 : self.on/viewModel.bpmScale());

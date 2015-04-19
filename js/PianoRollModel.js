@@ -1,9 +1,9 @@
 var Muzart;
 
-(function(MIDI, Muzart){
+(function($, Muzart){
 	'use strict';
 
-	Muzart.PianoRollModel = function() {
+	Muzart.PianoRollModel = function(MIDI) {
 		var self = this;
 		
 		self.widthOfQuarterNoteAtNoZoom = 10;
@@ -38,6 +38,14 @@ var Muzart;
 		self.tracks = [];
 		self.notes = ko.observableArray([]);
 
+		self.selectedNotes = ko.pureComputed(function(){
+			return ko.utils.arrayFilter(self.notes(), function(note) {
+				return note.isSelected();
+			});
+		});
+
+
+
 		for(var i=0; i< 88; i++) {
 			self.tracks.push(new Muzart.Track(i));
 		}
@@ -54,6 +62,9 @@ var Muzart;
 
 			var newNote = new Muzart.Note(data.num, trackXSnap, self.gridResolution());
 			newNote.play(true);
+			self.deselectAll();
+			newNote.isSelected(true);
+
 			self.notes.push(newNote);
 			
 			//retrigger event to start dragging as soon as note is created
@@ -69,7 +80,11 @@ var Muzart;
 				self.notes.remove($data);
 			}
 		};
-		
+		self.deselectAll = function() {
+			$.each(self.notes(), function(i,note) {
+				note.isSelected(false);
+			});
+		};
 		self.play = function() {
 			//21 = A0, 108 = Gb7
 			var velocity = 127; // how hard the note hits
@@ -84,4 +99,4 @@ var Muzart;
 		};
 	};
 
-})(MIDI, Muzart || (Muzart = {}));
+})(jQuery, Muzart || (Muzart = {}));

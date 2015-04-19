@@ -5,9 +5,12 @@
 		init: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
 			var model = bindingContext.$root;
 			
+			//play note on mousedown, but not on the draggable trigger
 			$(element).on('mousedown', function(e) {model.removeNote(noteModel, e); if(e.which===1 && dp===false){noteModel.play(true); }dp=false;}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
 			
+			//make the note draggable within the piano roll
 			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
+				//detect when the note changes key when dragging and play note
 				drag: function(event, ui) {
 					if(ui.helper.css('top') != noteModel.prevTop) {
 						var fixedTop = Math.round(ui.position.top/trackHeight);
@@ -18,6 +21,7 @@
 						noteModel.prevTop = ui.helper.css('top');
 					}
 				},
+				//reset note position and delete underlying notes when we stop dragging
 				stop: function(e, ui) {
 					// this math rounding is a hack to fix jquery ui bugs
 					var fixedLeft = Math.round(ui.position.left/model.gridBaseWidth());
@@ -35,6 +39,8 @@
 					noteModel.top = fixedTop;
 				}
 			});
+
+			//make the note resizable
 			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent", 
 				stop: function(e, ui) {
 					var fixedLength = Math.round(ui.size.width/model.gridBaseWidth());
@@ -44,6 +50,8 @@
 			});
 			
 		},
+		
+		//adapt to zoom
 		update: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
 			var model = bindingContext.$root;
 			$(element).draggable("option", "grid", [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ]);

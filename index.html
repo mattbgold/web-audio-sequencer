@@ -16,7 +16,7 @@
 	<div class="track" data-bind="event: { mousedown: $root.trackClicked }, css: $root.trackZoomClass, text: $data.noteText()"></div>
 	<!-- /ko -->
 	<!-- ko foreach: notes -->
-	<div class="note" data-bind="gridNote: $root.gridSnapWidth"></div>
+	<div class="note" data-bind="gridNote: $root.gridSnapWidth, css: { 'is-note-selected': isSelected }"></div>
 	<!-- /ko -->
 </div>
 
@@ -73,7 +73,7 @@
 		});
 	});
 	
-	var viewModel = new Muzart.PianoRollModel();
+	var viewModel = new Muzart.PianoRollModel(MIDI);
 	ko.applyBindings(viewModel);
 </script>
 </body>

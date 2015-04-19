@@ -38,6 +38,9 @@
     background-color:#AFA;
     z-index:1;
 }
+.note.is-note-selected {
+	border-color:Green;
+}
 .note.ui-draggable-dragging {
 	border-width: 2px;
 	z-index: 2;
