@@ -23,6 +23,7 @@ var Muzart;
 		self.isSelected = ko.observable(false);
 
 //TODO: move this function outta here or pass in the bpmScale reference
+// Oooor, make it only possible to play note now, and move the timing into my code.
 		self.play = function(playNow) {
 			var velocity = 127;
 			MIDI.noteOn(0, (108 - self.top), velocity, playNow ? 0 : self.on/viewModel.bpmScale());
