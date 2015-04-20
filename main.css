@@ -13,6 +13,12 @@
 .roll.is-cursor-subtract {
 	cursor: alias;
 }
+.roll > .box-select {
+	display:none;
+	border: 1px dashed White;
+	position: absolute;
+	z-index:100;
+}
 .keys {
 	background-image:url('Images/keys.jpg');
 	background-repeat:repeat-y;

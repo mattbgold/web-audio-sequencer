@@ -19,6 +19,7 @@
 	<!-- ko foreach: notes -->
 	<div class="note" data-bind="gridNote: $root.gridSnapWidth, css: { 'is-note-selected': isSelected }"></div>
 	<!-- /ko -->
+	<div class="box-select" data-bind="boxSelect: onBoxSelect"></div>
 </div>
 
 <!-- polyfill -->

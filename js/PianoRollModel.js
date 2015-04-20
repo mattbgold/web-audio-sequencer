@@ -53,7 +53,7 @@ var Muzart;
 		
 		// functions
 		self.trackClicked = function(data, event) {
-			if(event.which !== 1) {
+			if(event.which !== 1 || event.ctrlKey) {
 				return false;
 			}
 			var $track = $(event.target);
@@ -110,6 +110,26 @@ var Muzart;
 				note.isSelected(true);
 			});
 		};
+		
+		self.onBoxSelect = function(x1, x2, y1, y2) {
+			//TODO: pass in css selector for notes to define this loop. also pass in function to call on the notes
+			var boxedNotes = [];
+			$.each(self.notes(), function(i, note) {
+				var left = note.on * self.gridBaseWidth();
+				var top = note.top*trackHeight;
+				var w = note.len * self.gridBaseWidth();
+				var h = trackHeight;
+				
+				//with each note
+				if(left < x2 && left+w > x1 && top < y2 && top+h > y1) {
+					boxedNotes.push(note);
+					//select the ntoe
+				}
+			});
+			
+			self.affectSelection(boxedNotes);
+		};
+		
 		self.play = function() {
 			//21 = A0, 108 = Gb7
 			var velocity = 127; // how hard the note hits
@@ -125,15 +145,14 @@ var Muzart;
 
 		self.affectSelection = function(notes) {
 			//add, remove, notes from selection using inputs to determine
+			if (inputs.ctrl() && !inputs.shift() && !inputs.alt()) {
+				self.deselectAll();
+			}
 			$.each(notes, function(i, note) {
 				if(inputs.ctrl() && inputs.alt()) {
 					note.isSelected(false);
 				}
-				else if (inputs.ctrl() && inputs.shift()) {
-					note.isSelected(true);
-				}
 				else if(inputs.ctrl()) {
-					self.deselectAll();
 					note.isSelected(true);
 				}
 			});

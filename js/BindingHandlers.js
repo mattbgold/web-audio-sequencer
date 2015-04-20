@@ -67,4 +67,52 @@
 			$(element).css('width', noteModel.len*model.gridBaseWidth() + 'px').css('left', noteModel.on*model.gridBaseWidth()+'px').css('top', noteModel.top*trackHeight +'px');
 		}
 	};
+	
+	ko.bindingHandlers.boxSelect = {
+		init: function(element, valueAccessor, allBindings) {
+			var onSelect = valueAccessor();
+			var $container = $(element).parent();
+			var hidden = true;
+			var x1=0, x2=0, y1=0, y2=0;
+			var reCalc = function () {
+				var x3 = Math.min(x1,x2);
+				var x4 = Math.max(x1,x2);
+				var y3 = Math.min(y1,y2);
+				var y4 = Math.max(y1,y2);
+				element.style.left = x3 + 'px';
+				element.style.top = y3 + 'px';
+				element.style.width = x4 - x3 + 'px';
+				element.style.height = y4 - y3 + 'px';
+			};
+			
+			var offset = $container.offset();
+			
+			$container.mousedown(function(e) {
+				if(e.ctrlKey) {
+					$(element).show();
+					hidden=false;
+					x1 = e.clientX - offset.left;
+					y1 = e.clientY - offset.top;
+					reCalc();
+				}
+			}).mousemove(function(e) {
+				if(!hidden) {
+					x2 = e.clientX - offset.left;
+					y2 = e.clientY - offset.top;
+					reCalc();
+				}
+			}).mouseup(function(e) {
+				if(!hidden) {
+					var x3 = Math.min(x1,x2);
+					var x4 = Math.max(x1,x2);
+					var y3 = Math.min(y1,y2);
+					var y4 = Math.max(y1,y2);
+					
+					onSelect(x3, x4, y3, y4);
+					$(element).hide();
+				}
+			});
+		}
+	}
+		
 })(jQuery);
