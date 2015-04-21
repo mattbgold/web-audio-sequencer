@@ -180,7 +180,16 @@ var Muzart;
 			});
 			return false;
 		};
-
+		
+		self.cutSelection = function() {
+			self.copyBuffer = [];
+			$.each(self.selectedNotes(), function(i, note) {
+				self.copyBuffer.push(note.clone());
+			});
+			self.deleteSelection();
+			return false;
+		};
+		
 		self.pasteSelection = function() {
 			self.deselectAll();
 			$.each(self.copyBuffer, function(i, note) {
