@@ -144,7 +144,13 @@ var Muzart;
 		self.stop = function() {
 			MIDI.stopAllNotes();
 		};
-
+	
+		self.togglePlay = function() {
+			//TODO: implement this and bind to spacebar.
+			self.play();
+			return false;
+		}
+		
 		self.affectSelection = function(notes) {
 			//add, remove, notes from selection using inputs to determine
 			if (inputs.ctrl() && !inputs.shift() && !inputs.alt()) {
