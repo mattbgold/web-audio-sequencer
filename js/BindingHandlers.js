@@ -16,7 +16,17 @@
 			}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
 			
 			//make the note draggable within the piano roll
+			var topStart=0;
+			var leftStart=0;
+			var topPrev=0;
+			var leftPrev=0;
 			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
+				start: function(event, ui) {
+					topStart = ui.position.top;
+					leftStart = ui.position.left;
+					topPrev = ui.position.top;
+					leftPrev = ui.position.left;
+				},
 				//detect when the note changes key when dragging and play note
 				drag: function(event, ui) {
 					if(ui.helper.css('top') != noteModel.prevTop) {
@@ -27,6 +37,14 @@
 						}
 						noteModel.prevTop = ui.helper.css('top');
 					}
+					if(noteModel.isSelected()) {
+						$('.note.is-note-selected').css({
+							top: '+=' + (ui.position.top-topPrev),
+							left: '+=' + (ui.position.left-leftPrev)
+						});
+					}
+					topPrev = ui.position.top;
+					leftPrev = ui.position.left;
 				},
 				//reset note position and delete underlying notes when we stop dragging
 				stop: function(e, ui) {
@@ -36,14 +54,30 @@
 					$(ui.helper).css('left', fixedLeft*model.gridBaseWidth() + 'px');
 					$(ui.helper).css('top', fixedTop*trackHeight + 'px');
 					
+					noteModel.on = fixedLeft;
+					noteModel.top = fixedTop;
+					
+					if(noteModel.isSelected()) {
+						$.each(model.selectedNotes(), function(i, note) {
+							if(note!=noteModel) {
+								note.on += fixedLeft - Math.round(leftStart/model.gridBaseWidth())
+								note.top += fixedTop - Math.round(topStart/trackHeight)
+								var overlappedNote = $.grep(model.notes(), function(n,i) {
+									return (n!=note && n.on == note.on && n.top == note.top);
+								});
+								if(overlappedNote.length > 0) {
+									model.notes.remove(overlappedNote[0]);
+								}
+							}
+						});
+					}
+					
 					var overlappedNote = $.grep(model.notes(), function(n,i) {
 						return (n!=noteModel && n.on == fixedLeft && n.top == fixedTop);
 					});
 					if(overlappedNote.length > 0) {
 						model.notes.remove(overlappedNote[0]);
 					}
-					noteModel.on = fixedLeft;
-					noteModel.top = fixedTop;
 				}
 			});
 
