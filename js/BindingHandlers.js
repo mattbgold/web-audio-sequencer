@@ -91,14 +91,14 @@
 				if(e.ctrlKey) {
 					$(element).show();
 					hidden=false;
-					x1 = e.clientX - offset.left;
-					y1 = e.clientY - offset.top;
+					x1 = e.pageX - offset.left;
+					y1 = e.pageY - offset.top;
 					reCalc();
 				}
 			}).mousemove(function(e) {
 				if(!hidden) {
-					x2 = e.clientX - offset.left;
-					y2 = e.clientY - offset.top;
+					x2 = e.pageX - offset.left;
+					y2 = e.pageY - offset.top;
 					reCalc();
 				}
 			}).mouseup(function(e) {

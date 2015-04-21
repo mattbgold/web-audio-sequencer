@@ -104,11 +104,13 @@ var Muzart;
 			$.each(self.notes(), function(i,note) {
 				note.isSelected(false);
 			});
+			return false;
 		};
 		self.selectAll = function() {
 			$.each(self.notes(), function(i,note) {
 				note.isSelected(true);
 			});
+			return false;
 		};
 		
 		self.onBoxSelect = function(x1, x2, y1, y2) {
@@ -170,12 +172,17 @@ var Muzart;
 			$.each(self.selectedNotes(), function(i, note) {
 				self.copyBuffer.push(note.clone());
 			});
+			return false;
 		};
 
 		self.pasteSelection = function() {
+			self.deselectAll();
 			$.each(self.copyBuffer, function(i, note) {
-				self.notes.push(ko.toJS(note));
+				self.notes.push(note);
+				note.isSelected(true);
 			});
+			self.copySelection(); //refresh the copy buffer with newly cloned instances
+			return false;
 		};
 	};
 
