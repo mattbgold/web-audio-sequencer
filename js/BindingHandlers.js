@@ -19,7 +19,8 @@
 			var topStart=0;
 			var leftStart=0;
 			var topPrev=0;
-			var leftPrev=0;
+			var leftPrev = 0;
+			var wPrev = 0; 
 			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
 				start: function(event, ui) {
 					topStart = ui.position.top;
@@ -82,12 +83,39 @@
 			});
 
 			//make the note resizable
-			$(element).resizable({grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent", 
-				stop: function(e, ui) {
-					var fixedLength = Math.round(ui.size.width/model.gridBaseWidth());
-					noteModel.len = fixedLength;
-					$(ui.helper).css('width', fixedLength * model.gridBaseWidth() + 'px'); //hack to fix bug in jqueryUI resizable
-				}
+			$(element).resizable({
+			    grid: ko.utils.unwrapObservable(valueAccessor()), handles: 'e', containment: "parent",
+			    start: function(e, ui) {
+			        wPrev = $(ui.helper).width();
+			    },
+			    resize: function (e, ui) {
+			        if (noteModel.isSelected()) {
+			            var deltaW = (ui.size.width - wPrev);
+
+			            var notesToResize = $('.note.is-note-selected').filter(function (i, note) {
+			                return deltaW > 0 || $(note).width() > model.gridSnapWidth();
+			            });
+
+			            $(notesToResize).css({
+			                width: '+=' + deltaW
+			            });
+			            $(ui.helper).width(ui.size.width);
+			            wPrev = ui.size.width;
+			        }
+			    },
+			    stop: function (e, ui) {
+					var deltaW = (ui.size.width - noteModel.len*model.gridBaseWidth());
+			        var fixedLength = Math.round(ui.size.width / model.gridBaseWidth());
+			        noteModel.len = fixedLength;
+			        $(ui.helper).css('width', fixedLength * model.gridBaseWidth() + 'px'); //hack to fix bug in jqueryUI resizable
+					if(noteModel.isSelected()) {
+						$.each(model.selectedNotes(), function(i, note) {
+							if(note!=noteModel) {
+								note.len += Math.round(deltaW/model.gridBaseWidth());
+							}
+						});
+					}
+			    }
 			});
 			
 		},
