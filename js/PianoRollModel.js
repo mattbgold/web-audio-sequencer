@@ -14,7 +14,7 @@ var Muzart;
 			return Math.pow(2, self.snapMode());
 		});
 		self.zoomLevel = ko.observable(4);
-		
+		self.measuresInRoll = ko.observable(8);
 		//current width in pixels of smallest possible note
 		self.gridBaseWidth = ko.pureComputed(function(){
 			var widthOfBaseNote = self.widthOfQuarterNoteAtNoZoom/self.baseNotesToMakeQuarterNote;
@@ -34,6 +34,13 @@ var Muzart;
 			return bps*self.baseNotesToMakeQuarterNote; // base notes per second
 		});
 		
+		var startTime = new Date();
+		self.playTime = ko.observable(0.0);
+		var updateInterval;
+		var updatePlayTime = function () {
+		    self.playTime( (new Date() - self.startTime) / 1000);
+		};
+
 		self.bpm = ko.observable(120);
 		self.tracks = [];
 		self.notes = ko.observableArray([]);
@@ -63,18 +70,11 @@ var Muzart;
 
 			var newNote = new Muzart.Note(data.num, trackXSnap, self.gridResolution());
 			newNote.play(true);
-			//self.deselectAll();
-			//newNote.isSelected(true);
 
 			self.notes.push(newNote);
 			
 			//retrigger event to start dragging as soon as note is created
 			setTimeout(function(){if(mouseLeft){dp=true;$('.note').last().trigger(event);}}, 100);
-		};
-
-		self.noteClicked = function() {
-			//TODO: put logic for add/remove/reset selection here
-
 		};
 
 		self.trackZoomClass = ko.pureComputed(function() {
@@ -114,7 +114,6 @@ var Muzart;
 		};
 		
 		self.onBoxSelect = function(x1, x2, y1, y2) {
-			//TODO: pass in css selector for notes to define this loop. also pass in function to call on the notes
 			var boxedNotes = [];
 			$.each(self.notes(), function(i, note) {
 				var left = note.on * self.gridBaseWidth();
@@ -132,22 +131,35 @@ var Muzart;
 			self.affectSelection(boxedNotes);
 		};
 		
+		self.noteQueue = [];
+
 		self.play = function() {
-			//21 = A0, 108 = Gb7
-			var velocity = 127; // how hard the note hits
+		    //21 = A0, 108 = Gb7
+		    self.stop();
+		    self.startTime = new Date();
+		    updateInterval = setInterval(updatePlayTime, 20);
 			MIDI.setVolume(0, 127);
 			ko.utils.arrayForEach(self.notes(), function(note) {
-				note.play();
+			    self.noteQueue.push(setTimeout(note.play, (note.on/self.bpmScale())*1000));
 			});
 		};
 		
-		self.stop = function() {
-			MIDI.stopAllNotes();
+		self.stop = function () {
+		    clearInterval(updateInterval);
+		    MIDI.stopAllNotes();
+		    $.each(self.noteQueue, function (i, val) {
+		        clearTimeout(val); 
+		    });
+		    self.noteQueue = [];
 		};
 	
 		self.togglePlay = function() {
-			//TODO: implement this and bind to spacebar.
-			self.play();
+		    if (self.noteQueue.length) {
+		        self.stop();
+		    }
+		    else {
+		        self.play();
+		    }
 			return false;
 		}
 		

@@ -32,9 +32,9 @@ var Muzart;
 
 //TODO: move this function outta here or pass in the bpmScale reference
 // Oooor, make it only possible to play note now, and move the timing into my code.
-		self.play = function(playNow) {
-			MIDI.noteOn(0, (108 - self.top), self.vel, playNow ? 0 : self.on/viewModel.bpmScale());
-			MIDI.noteOff(0, (108 - self.top), playNow ? .1 : (self.on + self.len)/viewModel.bpmScale());
+		self.play = function(preview) {
+			MIDI.noteOn(0, (108 - self.top), self.vel, 0);
+			MIDI.noteOff(0, (108 - self.top), preview ? .1 : (self.len)/viewModel.bpmScale());
 		};
 	};
 

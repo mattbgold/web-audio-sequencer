@@ -26,6 +26,7 @@
 	height:1760px;
 	width:100px;
 	position:absolute;
+    z-index:10;
 }
 .track{
     padding:0;
@@ -33,6 +34,13 @@
     height:20px;
     border-bottom:1px solid black;
     box-sizing: border-box;
+}
+.cursor {
+    width:1px;
+    height:100%;
+    top:0px;
+    background-color: yellow;
+    position:absolute;
 }
 .track-1 {
 	background-image: url('Images/track1.png')
@@ -65,7 +73,7 @@
     border-radius: 5px;
 }
 .note.is-note-selected {
-	border-color:Green;
+	background-color:#FAA;
 }
 .note.ui-draggable-dragging {
 	border-width: 2px;

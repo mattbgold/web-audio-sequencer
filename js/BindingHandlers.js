@@ -63,21 +63,8 @@
 							if(note!=noteModel) {
 								note.on += fixedLeft - Math.round(leftStart/model.gridBaseWidth())
 								note.top += fixedTop - Math.round(topStart/trackHeight)
-								var overlappedNote = $.grep(model.notes(), function(n,i) {
-									return (n!=note && n.on == note.on && n.top == note.top);
-								});
-								if(overlappedNote.length > 0) {
-									model.notes.remove(overlappedNote[0]);
-								}
 							}
 						});
-					}
-					
-					var overlappedNote = $.grep(model.notes(), function(n,i) {
-						return (n!=noteModel && n.on == fixedLeft && n.top == fixedTop);
-					});
-					if(overlappedNote.length > 0) {
-						model.notes.remove(overlappedNote[0]);
 					}
 				}
 			});
