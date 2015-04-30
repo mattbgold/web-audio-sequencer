@@ -1,0 +1,22 @@
+﻿@Styles.Render("~/Content/pianoroll")
+
+<!-- ko with: pianoRoll -->
+<div>Snap Width: <span data-bind="text:snapLengthText"></span><input type="range" min="0" max="4" data-bind="value: snapMode" /> Zoom: <span data-bind="text:zoomLevel"></span> <input type="range" min="1" max="5" data-bind="value: zoomLevel" /></div>
+<div>BPM: <input type="text" data-bind="value: bpm"/>
+    <button type="button" data-bind="click: play, enable: loaded">Play</button>
+    <button type="button" data-bind="click: stop">Stop</button> 
+    <span data-bind="text: playTime"></span>
+</div>
+
+<div class="keys"></div>
+<div class="roll" oncontextmenu="return false;" data-bind="css: actionCursor, style: {width: (measuresInRoll()*gridBaseWidth()*4*baseNotesToMakeQuarterNote) + 'px'}">
+	<div class="cursor" data-bind="style: { left: ((playTime()/60)*bpm()*baseNotesToMakeQuarterNote)*gridBaseWidth() + 'px' }"></div>
+    <!-- ko foreach: tracks -->
+	<div class="track" data-bind="event: { mousedown: $root.trackClicked }, css: $root.trackZoomClass"></div>
+	<!-- /ko -->
+	<!-- ko foreach: notes -->
+	<div class="note" data-bind="gridNote: $root.gridSnapWidth, css: { 'is-note-selected': isSelected }"></div>
+	<!-- /ko -->
+	<div class="box-select" data-bind="boxSelect: onBoxSelect"></div>
+</div>
+<!-- /ko -->
