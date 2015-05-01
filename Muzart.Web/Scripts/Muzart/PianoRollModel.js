@@ -55,7 +55,7 @@ var Muzart;
 
 
 		for(var i=0; i< 88; i++) {
-			self.tracks.push(new Muzart.Track(i));
+			self.tracks.push(new Muzart.NoteTrack(i));
 		}
 		
 		// functions

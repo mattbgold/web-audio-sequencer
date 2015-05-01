@@ -212,6 +212,7 @@
     <Content Include="Scripts\midi\shim\WebMIDIAPI.js" />
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Scripts\Muzart\BindingHandlers.js" />
+    <Content Include="Scripts\Muzart\ComposeModel.js" />
     <Content Include="Scripts\Muzart\KnockoutInit.js" />
     <Content Include="Scripts\midi\audioDetect.js" />
     <Content Include="Scripts\midi\gm.js" />
