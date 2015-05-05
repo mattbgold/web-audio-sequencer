@@ -6,6 +6,6 @@
     Muzart.ComposeModel = function () {
         var self = this;
         
-        var tracks = [];
+        var tracks = [new Muzart.Track()];
     };
 })(jQuery, Muzart || (Muzart = {}));

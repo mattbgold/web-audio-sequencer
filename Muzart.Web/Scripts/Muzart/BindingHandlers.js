@@ -12,7 +12,7 @@
 					noteModel.play(true); 
 				}
 				dp=false;
-				model.affectSelection([noteModel]);
+				model.selection.affectSelection([noteModel]);
 			}).on('mousemove', function(e) {model.removeNote(noteModel, e);});
 			
 			//make the note draggable within the piano roll
@@ -59,7 +59,7 @@
 					noteModel.top = fixedTop;
 					
 					if(noteModel.isSelected()) {
-						$.each(model.selectedNotes(), function(i, note) {
+						$.each(model.selection.selectedElements(), function(i, note) {
 							if(note!=noteModel) {
 								note.on += fixedLeft - Math.round(leftStart/model.gridBaseWidth())
 								note.top += fixedTop - Math.round(topStart/trackHeight)
@@ -96,7 +96,7 @@
 			        noteModel.len = fixedLength;
 			        $(ui.helper).css('width', fixedLength * model.gridBaseWidth() + 'px'); //hack to fix bug in jqueryUI resizable
 					if(noteModel.isSelected()) {
-						$.each(model.selectedNotes(), function(i, note) {
+						$.each(model.selection.selectedElements(), function(i, note) {
 							if(note!=noteModel) {
 								note.len += Math.round(deltaW/model.gridBaseWidth());
 							}

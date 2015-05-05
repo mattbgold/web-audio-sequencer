@@ -45,19 +45,12 @@ var Muzart;
 		self.tracks = [];
 		self.notes = ko.observableArray([]);
 
-		self.selectedNotes = ko.pureComputed(function(){
-			return ko.utils.arrayFilter(self.notes(), function(note) {
-				return note.isSelected();
-			});
-		});
-
-		self.copyBuffer = [];
-
-
 		for(var i=0; i< 88; i++) {
 			self.tracks.push(new Muzart.NoteTrack(i));
 		}
 		
+		self.selection = new Muzart.SelectionManager(self.notes);
+
 		// functions
 		self.trackClicked = function(data, event) {
 			if(event.which !== 1 || event.ctrlKey) {
@@ -100,37 +93,7 @@ var Muzart;
 				self.notes.remove($data);
 			}
 		};
-		self.deselectAll = function() {
-			$.each(self.notes(), function(i,note) {
-				note.isSelected(false);
-			});
-			return false;
-		};
-		self.selectAll = function() {
-			$.each(self.notes(), function(i,note) {
-				note.isSelected(true);
-			});
-			return false;
-		};
-		
-		self.onBoxSelect = function(x1, x2, y1, y2) {
-			var boxedNotes = [];
-			$.each(self.notes(), function(i, note) {
-				var left = note.on * self.gridBaseWidth();
-				var top = note.top*trackHeight;
-				var w = note.len * self.gridBaseWidth();
-				var h = trackHeight;
-				
-				//with each note
-				if(left < x2 && left+w > x1 && top < y2 && top+h > y1) {
-					boxedNotes.push(note);
-					//select the ntoe
-				}
-			});
-			
-			self.affectSelection(boxedNotes);
-		};
-		
+
 		self.noteQueue = [];
 
 		self.play = function() {
@@ -162,55 +125,7 @@ var Muzart;
 		    }
 			return false;
 		}
-		
-		self.affectSelection = function(notes) {
-			//add, remove, notes from selection using inputs to determine
-			if (inputs.ctrl() && !inputs.shift() && !inputs.alt()) {
-				self.deselectAll();
-			}
-			$.each(notes, function(i, note) {
-				if(inputs.ctrl() && inputs.alt()) {
-					note.isSelected(false);
-				}
-				else if(inputs.ctrl()) {
-					note.isSelected(true);
-				}
-			});
-		};
-
-		self.deleteSelection = function() {
-			$.each(self.selectedNotes(), function(i, note) {
-				self.notes.remove(note);
-			});
-			return false;
-		};
-
-		self.copySelection = function() {
-			self.copyBuffer = [];
-			$.each(self.selectedNotes(), function(i, note) {
-				self.copyBuffer.push(note.clone());
-			});
-			return false;
-		};
-		
-		self.cutSelection = function() {
-			self.copyBuffer = [];
-			$.each(self.selectedNotes(), function(i, note) {
-				self.copyBuffer.push(note.clone());
-			});
-			self.deleteSelection();
-			return false;
-		};
-		
-		self.pasteSelection = function() {
-			self.deselectAll();
-			$.each(self.copyBuffer, function(i, note) {
-				self.notes.push(note);
-				note.isSelected(true);
-			});
-			self.copySelection(); //refresh the copy buffer with newly cloned instances
-			return false;
-		};
 	};
+
 
 })(jQuery, Muzart || (Muzart = {}));

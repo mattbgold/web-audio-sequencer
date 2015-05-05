@@ -1,0 +1,54 @@
+﻿@{
+    ViewBag.Title = "Index";
+}
+
+<!-- ko foreach: tracks -->
+<div class="row clearfix">
+	<div class="col-md-2">
+	</div>
+	<div class="col-md-10">
+	</div>
+</div>
+<!-- /ko -->
+
+
+@section Scripts {
+    @Scripts.Render("~/bundles/midi");
+    @Scripts.Render("~/bundles/muzartcompose")
+<script>
+    var trackHeight = 20;
+    var mouseRight = false;
+    var mouseLeft = false;
+    var inputs = {
+        ctrl: ko.observable(false),
+        shift: ko.observable(false),
+        alt: ko.observable(false)
+    };
+
+    //TODO: move all piano roll stuff into Piano roll component
+    $(function () {
+        /*$(document).mousedown(function (e) {
+            if (e.which === 3) mouseRight = true;
+            if (e.which === 1) mouseLeft = true;
+        });
+        $(document).mouseup(function (e) {
+            if (e.which === 3) mouseRight = false;
+            if (e.which === 1) mouseLeft = false;
+        });
+        $(document).on('keyup keydown', function (e) { inputs.shift(e.shiftKey); });
+        $(document).on('keyup keydown', function (e) { inputs.ctrl(e.ctrlKey); });
+        $(document).on('keyup keydown', function (e) { inputs.alt(e.altKey); });
+        //TODO: make sure these get encapsulated in the piano roll component, or rather, set up a way to wire different handlers to these hotkeys depending on context
+        $(document).bind('keydown', 'ctrl+a', viewModel.selectAll);
+        $(document).bind('keydown', 'ctrl+d', viewModel.deselectAll);
+        $(document).bind('keydown', 'del', viewModel.deleteSelection);
+        $(document).bind('keydown', 'backspace', viewModel.deleteSelection);
+        $(document).bind('keydown', 'ctrl+c', viewModel.copySelection);
+        $(document).bind('keydown', 'ctrl+x', viewModel.cutSelection);
+        $(document).bind('keydown', 'ctrl+v', viewModel.pasteSelection);
+        $(document).bind('keydown', 'space', viewModel.togglePlay);*/
+
+    var viewModel = new Muzart.ComposeModel();
+    ko.applyBindings(viewModel);
+</script>
+}

@@ -243,6 +243,7 @@
     <Content Include="Views\Shared\PianoRollComponent.cshtml" />
     <Content Include="Scripts\midi\jasmid\LICENSE" />
     <Content Include="Views\Shared\MuzartJS.cshtml" />
+    <Content Include="Views\Compose\Index2.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />
