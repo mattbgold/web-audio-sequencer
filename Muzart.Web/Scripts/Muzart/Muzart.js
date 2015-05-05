@@ -3,6 +3,14 @@ var Muzart;
 (function(MIDI, Muzart){
 	'use strict';
 
+	Muzart.inputs = {
+	    ctrl: ko.observable(false),
+	    shift: ko.observable(false),
+	    alt: ko.observable(false),
+	    mouseRight: false,
+        mouseLeft: false
+	};
+
 	var Selectable = function (getX, getY, getWidth, getHeight) {
 	    var self = this;
 
@@ -51,8 +59,6 @@ var Muzart;
 	    var f = function(){alert('x/y/w/h not implemented');};
 	    Selectable.call(self, f, f, f, f);
 	};
-	Muzart.Canvas.prototype = new Selectable();
-
 
 	Muzart.NoteTrack = function(num) {
 		var self = this;
@@ -134,14 +140,14 @@ var Muzart;
 
 	    self.affectSelection = function (objs) {
 	        //add, remove, objects from selection using inputs to determine
-	        if (inputs.ctrl() && !inputs.shift() && !inputs.alt()) {
+	        if (Muzart.inputs.ctrl() && !Muzart.inputs.shift() && !Muzart.inputs.alt()) {
 	            self.deselectAll();
 	        }
 	        $.each(objs, function (i, obj) {
-	            if (inputs.ctrl() && inputs.alt()) {
+	            if (Muzart.inputs.ctrl() && Muzart.inputs.alt()) {
 	                obj.isSelected(false);
 	            }
-	            else if (inputs.ctrl()) {
+	            else if (Muzart.inputs.ctrl()) {
 	                obj.isSelected(true);
 	            }
 	        });

@@ -3,6 +3,7 @@ var Muzart;
 (function($, Muzart){
     'use strict';
 
+    //TODO: remove anything here that is not part of pianoRoll component into ComposeModel
 	Muzart.PianoRollModel = function(MIDI) {
 		var self = this;
 		
@@ -67,7 +68,7 @@ var Muzart;
 			self.notes.push(newNote);
 			
 			//retrigger event to start dragging as soon as note is created
-			setTimeout(function(){if(mouseLeft){dp=true;$('.note').last().trigger(event);}}, 100);
+			setTimeout(function(){if(Muzart.inputs.mouseLeft){dp=true;$('.note').last().trigger(event);}}, 100);
 		};
 
 		self.trackZoomClass = ko.pureComputed(function() {
@@ -75,13 +76,13 @@ var Muzart;
 		});
 		self.actionCursor = ko.pureComputed(function() {
 			var cls = '';
-			if(inputs.ctrl() && inputs.alt()) {
+			if (Muzart.inputs.ctrl() && Muzart.inputs.alt()) {
 				return 'is-cursor-subtract';
 			}
-			else if(inputs.ctrl() && inputs.shift()) {
+			else if(Muzart.inputs.ctrl() && Muzart.inputs.shift()) {
 				return 'is-cursor-add';
 			}
-			else if(inputs.ctrl()) {
+			else if(Muzart.inputs.ctrl()) {
 				return 'is-cursor-select';
 			}
 			else return '';
@@ -89,7 +90,7 @@ var Muzart;
 		});
 
 		self.removeNote = function($data, event) {
-			if(mouseRight || (event.type === 'mousedown' && event.which ===3)) {
+			if(Muzart.inputs.mouseRight || (event.type === 'mousedown' && event.which ===3)) {
 				self.notes.remove($data);
 			}
 		};

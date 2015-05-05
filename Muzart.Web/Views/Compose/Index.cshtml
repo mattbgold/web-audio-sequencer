@@ -9,28 +9,21 @@
     @Scripts.Render("~/bundles/muzartcompose")
 <script>
     var trackHeight = 20;
-    var mouseRight = false;
-    var mouseLeft = false;
-    var inputs = {
-        ctrl: ko.observable(false),
-        shift: ko.observable(false),
-        alt: ko.observable(false)
-    };
     dp = false;
 
-    //TODO: move all piano roll stuff into Piano roll component
     $(function () {
+        //TODO: move these bindings somewhere else. 
         $(document).mousedown(function (e) {
-            if (e.which === 3) mouseRight = true;
-            if (e.which === 1) mouseLeft = true;
+            if (e.which === 3) Muzart.inputs.mouseRight = true;
+            if (e.which === 1) Muzart.inputs.mouseLeft = true;
         });
         $(document).mouseup(function (e) {
-            if (e.which === 3) mouseRight = false;
-            if (e.which === 1) mouseLeft = false;
+            if (e.which === 3) Muzart.inputs.mouseRight = false;
+            if (e.which === 1) Muzart.inputs.mouseLeft = false;
         });
-        $(document).on('keyup keydown', function (e) { inputs.shift(e.shiftKey); });
-        $(document).on('keyup keydown', function (e) { inputs.ctrl(e.ctrlKey); });
-        $(document).on('keyup keydown', function (e) { inputs.alt(e.altKey); });
+        $(document).on('keyup keydown', function (e) { Muzart.inputs.shift(e.shiftKey); });
+        $(document).on('keyup keydown', function (e) { Muzart.inputs.ctrl(e.ctrlKey); });
+        $(document).on('keyup keydown', function (e) { Muzart.inputs.alt(e.altKey); });
         //TODO: make sure these get encapsulated in the piano roll component, or rather, set up a way to wire different handlers to these hotkeys depending on context
         $(document).bind('keydown', 'ctrl+a', viewModel.selection.selectAll);
         $(document).bind('keydown', 'ctrl+d', viewModel.selection.deselectAll);
