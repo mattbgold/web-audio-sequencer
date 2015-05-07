@@ -8,7 +8,6 @@
     @Scripts.Render("~/bundles/midi");
     @Scripts.Render("~/bundles/muzartcompose")
 <script>
-    var trackHeight = 20;
     dp = false;
 
     $(function () {
@@ -92,7 +91,7 @@
         });
     });
 
-    var viewModel = new Muzart.PianoRollModel(MIDI);
+    var viewModel = new Muzart.PianoRollModel();
     ko.applyBindings(viewModel);
 </script>
 }

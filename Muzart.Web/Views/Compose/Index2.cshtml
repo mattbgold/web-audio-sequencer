@@ -3,32 +3,28 @@
 }
 
 <!-- ko foreach: tracks -->
-<div class="row clearfix">
+<div class="row">
 	<div class="col-md-2">
+        <button class="btn btn-default" data-bind="click: $parent.removeTrack">X</button>
+        <select data-bind="options: $root.instruments, value: instrument"></select>
 	</div>
 	<div class="col-md-10">
+        content
 	</div>
 </div>
 <!-- /ko -->
+<button class="btn btn-default" data-bind="click: addTrack">Add Track</button>
 
 
 @section Scripts {
-    @Scripts.Render("~/bundles/midi");
+    @Scripts.Render("~/bundles/midi")
     @Scripts.Render("~/bundles/muzartcompose")
 <script>
-    var trackHeight = 20;
-    var mouseRight = false;
-    var mouseLeft = false;
-    var inputs = {
-        ctrl: ko.observable(false),
-        shift: ko.observable(false),
-        alt: ko.observable(false)
-    };
-
     //TODO: move all piano roll stuff into Piano roll component
     $(function () {
-        var viewModel = new Muzart.ComposeModel();
-        ko.applyBindings(viewModel);
+       
     });
+    var viewModel = new Muzart.ComposeModel();
+    ko.applyBindings(viewModel);
 </script>
 }

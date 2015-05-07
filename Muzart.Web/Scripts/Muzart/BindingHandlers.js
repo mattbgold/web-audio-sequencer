@@ -21,7 +21,8 @@
 			var topPrev=0;
 			var leftPrev = 0;
 			var wPrev = 0; 
-			$(element).draggable({grid: [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ], containment: "parent", 
+			$(element).draggable({
+			    grid: [ko.utils.unwrapObservable(valueAccessor()), model.gridState.rowHeight()], containment: "parent",
 				start: function(event, ui) {
 					topStart = ui.position.top;
 					leftStart = ui.position.left;
@@ -31,7 +32,7 @@
 				//detect when the note changes key when dragging and play note
 				drag: function(event, ui) {
 					if(ui.helper.css('top') != noteModel.prevTop) {
-						var fixedTop = Math.round(ui.position.top/trackHeight);
+					    var fixedTop = Math.round(ui.position.top / model.gridState.rowHeight());
 						if(noteModel.top !== fixedTop) {
 							noteModel.top = fixedTop;
 							noteModel.play(true);
@@ -50,10 +51,10 @@
 				//reset note position and delete underlying notes when we stop dragging
 				stop: function(e, ui) {
 					// this math rounding is a hack to fix jquery ui bugs
-					var fixedLeft = Math.round(ui.position.left/model.gridBaseWidth());
-					var fixedTop = Math.round(ui.position.top/trackHeight);
-					$(ui.helper).css('left', fixedLeft*model.gridBaseWidth() + 'px');
-					$(ui.helper).css('top', fixedTop*trackHeight + 'px');
+				    var fixedLeft = Math.round(ui.position.left / model.gridState.gridBaseWidth());
+				    var fixedTop = Math.round(ui.position.top / model.gridState.rowHeight());
+					$(ui.helper).css('left', fixedLeft * model.gridState.gridBaseWidth() + 'px');
+					$(ui.helper).css('top', fixedTop * model.gridState.rowHeight() + 'px');
 					
 					noteModel.on = fixedLeft;
 					noteModel.top = fixedTop;
@@ -61,8 +62,8 @@
 					if(noteModel.isSelected()) {
 						$.each(model.selection.selectedElements(), function(i, note) {
 							if(note!=noteModel) {
-								note.on += fixedLeft - Math.round(leftStart/model.gridBaseWidth())
-								note.top += fixedTop - Math.round(topStart/trackHeight)
+							    note.on += fixedLeft - Math.round(leftStart / model.gridState.gridBaseWidth())
+							    note.top += fixedTop - Math.round(topStart / model.gridState.rowHeight())
 							}
 						});
 					}
@@ -80,7 +81,7 @@
 			            var deltaW = (ui.size.width - wPrev);
 
 			            var notesToResize = $('.note.is-note-selected').filter(function (i, note) {
-			                return deltaW > 0 || $(note).width() > model.gridSnapWidth();
+			                return deltaW > 0 || $(note).width() > model.gridState.gridSnapWidth();
 			            });
 
 			            $(notesToResize).css({
@@ -91,14 +92,14 @@
 			        }
 			    },
 			    stop: function (e, ui) {
-					var deltaW = (ui.size.width - noteModel.len*model.gridBaseWidth());
-			        var fixedLength = Math.round(ui.size.width / model.gridBaseWidth());
+			        var deltaW = (ui.size.width - noteModel.len * model.gridState.gridBaseWidth());
+			        var fixedLength = Math.round(ui.size.width / model.gridState.gridBaseWidth());
 			        noteModel.len = fixedLength;
-			        $(ui.helper).css('width', fixedLength * model.gridBaseWidth() + 'px'); //hack to fix bug in jqueryUI resizable
+			        $(ui.helper).css('width', fixedLength * model.gridState.gridBaseWidth() + 'px'); //hack to fix bug in jqueryUI resizable
 					if(noteModel.isSelected()) {
 						$.each(model.selection.selectedElements(), function(i, note) {
 							if(note!=noteModel) {
-								note.len += Math.round(deltaW/model.gridBaseWidth());
+							    note.len += Math.round(deltaW / model.gridState.gridBaseWidth());
 							}
 						});
 					}
@@ -110,10 +111,10 @@
 		//adapt to zoom
 		update: function(element, valueAccessor, allBindings, noteModel, bindingContext) {
 			var model = bindingContext.$root;
-			$(element).draggable("option", "grid", [ ko.utils.unwrapObservable(valueAccessor()), trackHeight ]);
+			$(element).draggable("option", "grid", [ko.utils.unwrapObservable(valueAccessor()), model.gridState.rowHeight()]);
 			$(element).resizable("option", "grid", ko.utils.unwrapObservable(valueAccessor()));
 			
-			$(element).css('width', noteModel.len*model.gridBaseWidth() + 'px').css('left', noteModel.on*model.gridBaseWidth()+'px').css('top', noteModel.top*trackHeight +'px');
+			$(element).css('width', noteModel.len * model.gridState.gridBaseWidth() + 'px').css('left', noteModel.on * model.gridState.gridBaseWidth() + 'px').css('top', noteModel.top * model.gridState.rowHeight() + 'px');
 		}
 	};
 	

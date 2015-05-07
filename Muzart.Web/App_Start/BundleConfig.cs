@@ -33,7 +33,10 @@ namespace Muzart.Web
             bundles.Add(new ScriptBundle("~/bundles/bootstrap").Include("~/Scripts/boostrap.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/muzartcompose").Include(
+                "~/Scripts/Muzart/SelectionModel.js",
+                "~/Scripts/Muzart/SnapZoomGridModel.js",
                 "~/Scripts/Muzart/Muzart.js",
+                "~/Scripts/Muzart/ComposeModel.js",
                 "~/Scripts/Muzart/PianoRollModel.js"));
 
             bundles.Add(new ScriptBundle("~/bundles/midi").IncludeDirectory(

@@ -194,7 +194,6 @@
     <Content Include="Scripts\jquery-ui-1.11.4.js" />
     <Content Include="Scripts\jquery-ui-1.11.4.min.js" />
     <Content Include="Scripts\jquery.hotkeys.js" />
-    <Content Include="Scripts\jquery.hotkeys.min.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.js" />
     <Content Include="Scripts\jquery.unobtrusive-ajax.min.js" />
     <Content Include="Scripts\jquery.validate.js" />
@@ -213,6 +212,8 @@
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Scripts\Muzart\BindingHandlers.js" />
     <Content Include="Scripts\Muzart\ComposeModel.js" />
+    <Content Include="Scripts\Muzart\Copy of PianoRollModel.js" />
+    <Content Include="Scripts\Muzart\SnapZoomGridModel.js" />
     <Content Include="Scripts\Muzart\KnockoutInit.js" />
     <Content Include="Scripts\midi\audioDetect.js" />
     <Content Include="Scripts\midi\gm.js" />
@@ -226,6 +227,7 @@
     <Content Include="Scripts\Muzart\PianoRollModel.js" />
     <Content Include="Scripts\midi\util\dom_request_script.js" />
     <Content Include="Scripts\midi\util\dom_request_xhr.js" />
+    <Content Include="Scripts\Muzart\SelectionModel.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config" />
@@ -239,11 +241,11 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Compose\Index.cshtml" />
+    <Content Include="Views\Compose\Index_.cshtml" />
     <Content Include="Views\Shared\PianoRollComponent.cshtml" />
     <Content Include="Scripts\midi\jasmid\LICENSE" />
     <Content Include="Views\Shared\MuzartJS.cshtml" />
-    <Content Include="Views\Compose\Index2.cshtml" />
+    <Content Include="Views\Compose\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

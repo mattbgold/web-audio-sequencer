@@ -6,28 +6,30 @@ var Muzart;
     //TODO: remove anything here that is not part of pianoRoll component into ComposeModel
     // this includes most all of the playhead related stuff (playhead could be reused in pianoroll and compose)
     // 
-	Muzart.PianoRollModel = function() {
+	Muzart.PianoRollModel = function(MIDI) {
 		var self = this;
 		
-
 		self.widthOfQuarterNoteAtNoZoom = 10;
 		self.baseNotesToMakeQuarterNote = 8; //defines smallest possible note. value of 8 means 32nd note
 		self.loaded = ko.observable(false);
-		self.bpm = ko.observable(120);
-		self.tracks = [];
-		self.notes = ko.observableArray([]);
+		self.snapMode = ko.observable(2);
+		self.gridResolution = ko.pureComputed(function() {
+			return Math.pow(2, self.snapMode());
+		});
+		self.zoomLevel = ko.observable(4);
 		self.measuresInRoll = ko.observable(8);
-
-		self.gridState = new Muzart.SnapZoomGridModel(self.widthOfQuarterNoteAtNoZoom / self.baseNotesToMakeQuarterNote, 20);
-		self.selection = new Muzart.SelectionModel(self.notes);
+		//current width in pixels of smallest possible note
+		self.gridBaseWidth = ko.pureComputed(function(){
+			var widthOfBaseNote = self.widthOfQuarterNoteAtNoZoom/self.baseNotesToMakeQuarterNote;
+			return widthOfBaseNote*Math.pow(2, self.zoomLevel()-1);
+		});
 		
-	    //init
-		for (var i = 0; i < 88; i++) {
-		    self.tracks.push(new Muzart.NoteTrack(i));
-		}
-
+		self.gridSnapWidth = ko.pureComputed(function() {
+			return self.gridResolution()*self.gridBaseWidth();
+		});
+		
 		self.snapLengthText = ko.pureComputed(function() {
-		    return '1/' + (self.baseNotesToMakeQuarterNote * 4 * self.gridState.gridBaseWidth() / self.gridState.gridSnapWidth())
+			return '1/'+(self.baseNotesToMakeQuarterNote*4*self.gridBaseWidth()/self.gridSnapWidth())
 		});
 		
 		self.bpmScale = ko.pureComputed(function() {
@@ -42,6 +44,15 @@ var Muzart;
 		    self.playTime( (new Date() - self.startTime) / 1000);
 		};
 
+		self.bpm = ko.observable(120);
+		self.tracks = [];
+		self.notes = ko.observableArray([]);
+
+		for(var i=0; i< 88; i++) {
+			self.tracks.push(new Muzart.NoteTrack(i));
+		}
+		
+		self.selection = new Muzart.SelectionModel(self.notes);
 
 		// functions
 		self.trackClicked = function(data, event) {
@@ -51,9 +62,9 @@ var Muzart;
 			var $track = $(event.target);
 			var offset = $track.offset();
 			var trackClickX = event.clientX - offset.left;
-			var trackXSnap = (Math.floor(trackClickX / self.gridState.gridSnapWidth()) * self.gridState.gridSnapWidth()) / self.gridState.gridBaseWidth();
+			var trackXSnap = (Math.floor(trackClickX / self.gridSnapWidth())*self.gridSnapWidth())/self.gridBaseWidth();
 
-			var newNote = new Muzart.Note(data.num, trackXSnap, self.gridState.gridResolution());
+			var newNote = new Muzart.Note(data.num, trackXSnap, self.gridResolution());
 			newNote.play(true);
 
 			self.notes.push(newNote);
@@ -63,7 +74,7 @@ var Muzart;
 		};
 
 		self.trackZoomClass = ko.pureComputed(function() {
-		    return 'track-' + self.gridState.zoomLevel();
+			return 'track-' + self.zoomLevel();
 		});
 		self.actionCursor = ko.pureComputed(function() {
 			var cls = '';
