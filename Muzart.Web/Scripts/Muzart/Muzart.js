@@ -1,54 +1,67 @@
 var Muzart;
 
 (function(MIDI, Muzart){
-	'use strict';
+    'use strict';
 
-	Muzart.inputs = {
-	    ctrl: ko.observable(false),
-	    shift: ko.observable(false),
-	    alt: ko.observable(false),
-	    mouseRight: false,
+    Muzart.inputs = {
+        ctrl: ko.observable(false),
+        shift: ko.observable(false),
+        alt: ko.observable(false),
+        mouseRight: false,
         mouseLeft: false
-	};
+    };
 
-	var Selectable = function (getX, getY, getWidth, getHeight) {
-	    var self = this;
+    var Selectable = function (getX, getY, getWidth, getHeight) {
+        var self = this;
 
-	    self.getX = getX;
-	    self.getY = getY;
-	    self.getW = getWidth;
+        self.getX = getX;
+        self.getY = getY;
+        self.getW = getWidth;
         self.getH = getHeight;
 
-	    self.isSelected = ko.observable(false);
-	    self.clone = self.clone || function () {
-	        alert('Clone not implemented!');
-	    }
-	};
+        self.isSelected = ko.observable(false);
+        self.clone = self.clone || function () {
+            alert('Clone not implemented!');
+        }
+    };
 
     //TODO: should we give each object its own "play" function? play a composition to play all tracks. play a track to solo, etc... chain of responsibility?
     //TODO: should we introduce a separate Timer/Player object which is used by other objects to keep time, manage playhead, handle playing/stopping?
 
-	Muzart.Track = function () {
-	    var self = this;
+    Muzart.Track = function () {
+        var self = this;
 
-	    self.instrument = ko.observable();
-	    self.sequenceNumber = 0;
-	    self.mute = ko.observable(false);
-	    self.solo = ko.observable(false);
-	    self.volume = ko.observable(1);
-	};
+        self.instrument = ko.observable();
+        self.sequenceNumber = 0;
+        self.mute = ko.observable(false);
+        self.solo = ko.observable(false);
+        self.volume = ko.observable(1);
+    };
 
-	Muzart.Canvas = function () {
-	    var self = this;
+    Muzart.Canvas = function (top, on, len) {
+        var self = this;
 	    
-	    self.notes = [];
-	    self.x = 0; //starting point in base notes. 
-	    self.length = 0; //length in base notes. if < notes in canvas, extra notes are not played but are remembered. 
+        self.notes = [];
+        self.on = on || 0; //starting point in base notes. 
 	    self.loopAmount = 1; //1 is no loop. Loop amount is a multiplier floating point;
-	    self.trackNum = 0;
-	    //should automation belong to canvas?
+	    self.top = top || 0; //determines which track we are in
+	    self.len = len || 4;
+        self.prevTop = null;
 
-	    //open piano roll from canvas
+        //open piano roll from canvas
+        self.clone = function () {
+            var clone = new Muzart.Canvas(self.top, self.on, self.len);
+            clone.prevTop = self.prevTop;
+            clone.isSelected(self.isSelected());
+            var clonedNotes = [];
+            for (var note in self.notes) {
+                clonedNotes.push(note.clone());
+            }
+            clone.notes = clonedNotes;
+
+            return clone;
+        };
+
 	    var f = function(){alert('x/y/w/h not implemented');};
 	    Selectable.call(self, f, f, f, f);
 	};
@@ -78,10 +91,10 @@ var Muzart;
 		    return note;
 		};
 
-        //TODO: get rid of all references to viewModel
-		self.play = function (preview) {
+        //TODO: get rid of all references to viewModel, lets only use this for previewing note and have a MIDIPlayer object handle all playback outside of here
+		self.play = function () {
 		    MIDI.noteOn(0, (108 - self.top), self.vel, 0);
-		    MIDI.noteOff(0, (108 - self.top), preview ? .1 : (self.len) / viewModel.bpmScale());
+		    MIDI.noteOff(0, (108 - self.top), .1);
 		}
 
 		var getX = function () { return self.on * viewModel.gridState.gridBaseWidth(); };

@@ -72,7 +72,7 @@
     opacity:.9;
     border-radius: 5px;
 }
-.note.is-note-selected {
+.note.is-selected {
 	background-color:#FAA;
 }
 .note.ui-draggable-dragging {

@@ -35,6 +35,7 @@ namespace Muzart.Web
             bundles.Add(new ScriptBundle("~/bundles/muzartcompose").Include(
                 "~/Scripts/Muzart/SelectionModel.js",
                 "~/Scripts/Muzart/SnapZoomGridModel.js",
+                "~/Scripts/Muzart/PlayerModel.js",
                 "~/Scripts/Muzart/Muzart.js",
                 "~/Scripts/Muzart/ComposeModel.js",
                 "~/Scripts/Muzart/PianoRollModel.js"));
@@ -43,11 +44,14 @@ namespace Muzart.Web
                 "~/Scripts/midi", "*.js", true));
 
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
-            bundles.Add(new StyleBundle("~/Content/pianoroll").Include("~/Content/Muzart/PianoRoll.css"));
+            bundles.Add(new StyleBundle("~/Content/muzartcompose").Include(
+                "~/Content/Muzart/Compose.css",
+                "~/Content/Muzart/PianoRoll.css"));
 
             bundles.Add(new StyleBundle("~/Content/bootstrap").Include(
                 "~/Content/bootstrap.css", 
-                "~/Content/bootstrap-theme.css"));
+                "~/Content/bootstrap-theme.css",
+                "~/Content/font-awesome.css"));
 
             bundles.Add(new StyleBundle("~/Content/themes/base/css").Include(
                         "~/Content/themes/base/jquery.ui.core.css",

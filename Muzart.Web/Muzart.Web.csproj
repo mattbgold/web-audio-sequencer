@@ -133,11 +133,15 @@
     <Content Include="Content\bootstrap-theme.min.css" />
     <Content Include="Content\bootstrap.css" />
     <Content Include="Content\bootstrap.min.css" />
+    <Content Include="Content\font-awesome.css" />
+    <Content Include="Content\font-awesome.min.css" />
+    <Content Include="Content\Muzart\Compose.css" />
     <Content Include="Content\Muzart\Images\keys.jpg" />
     <Content Include="Content\Muzart\Images\track1.png" />
     <Content Include="Content\Muzart\Images\track2.png" />
     <Content Include="Content\Muzart\Images\track3.png" />
     <Content Include="Content\Muzart\Images\track4.png" />
+    <Content Include="Content\Muzart\Images\track5.png" />
     <Content Include="Content\Muzart\midi\overworld1.mid" />
     <Content Include="Content\Muzart\PianoRoll.css" />
     <Content Include="Content\Muzart\soundfont\acoustic_grand_piano-ogg.js" />
@@ -174,6 +178,7 @@
     <Content Include="Content\themes\base\tabs.css" />
     <Content Include="Content\themes\base\theme.css" />
     <Content Include="Content\themes\base\tooltip.css" />
+    <Content Include="fonts\fontawesome-webfont.svg" />
     <Content Include="fonts\glyphicons-halflings-regular.svg" />
     <Content Include="Global.asax" />
     <Content Include="Content\Site.css" />
@@ -186,6 +191,10 @@
     <Content Include="Icon.png" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
+    <Content Include="fonts\fontawesome-webfont.woff" />
+    <Content Include="fonts\fontawesome-webfont.ttf" />
+    <Content Include="fonts\fontawesome-webfont.eot" />
+    <Content Include="fonts\FontAwesome.otf" />
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.3.js" />
     <Content Include="Scripts\jquery-2.1.3.min.js" />
@@ -212,6 +221,7 @@
     <Content Include="Scripts\modernizr-2.5.3.js" />
     <Content Include="Scripts\Muzart\BindingHandlers.js" />
     <Content Include="Scripts\Muzart\ComposeModel.js" />
+    <Content Include="Scripts\Muzart\PlayerModel.js" />
     <Content Include="Scripts\Muzart\SnapZoomGridModel.js" />
     <Content Include="Scripts\Muzart\KnockoutInit.js" />
     <Content Include="Scripts\midi\audioDetect.js" />
@@ -229,7 +239,9 @@
     <Content Include="Scripts\Muzart\SelectionModel.js" />
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\_references.js" />
-    <Content Include="Web.config" />
+    <Content Include="Web.config">
+      <SubType>Designer</SubType>
+    </Content>
     <Content Include="Web.Debug.config">
       <DependentUpon>Web.config</DependentUpon>
     </Content>
@@ -240,10 +252,10 @@
     <Content Include="Views\_ViewStart.cshtml" />
     <Content Include="Views\Shared\Error.cshtml" />
     <Content Include="Views\Shared\_Layout.cshtml" />
-    <Content Include="Views\Compose\Index_.cshtml" />
     <Content Include="Views\Shared\PianoRollComponent.cshtml" />
     <Content Include="Scripts\midi\jasmid\LICENSE" />
     <Content Include="Views\Shared\MuzartJS.cshtml" />
+    <Content Include="Views\Compose\IndexRol.cshtml" />
     <Content Include="Views\Compose\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
@@ -251,7 +263,9 @@
     <Folder Include="Models\" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="packages.config" />
+    <Content Include="packages.config">
+      <SubType>Designer</SubType>
+    </Content>
   </ItemGroup>
   <PropertyGroup>
     <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
