@@ -20,6 +20,12 @@
 .tracks-container {
     margin: 20px 0;
 }
+.canvasgrid > .box-select {
+	display:none;
+	border: 1px dashed #777;
+	position: absolute;
+	z-index:100;
+}
 .canvasgrid {
     position:relative;
 }

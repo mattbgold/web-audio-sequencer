@@ -46,7 +46,7 @@
     </div>
     <div class="col-xs-10 col-reset">
         <div class="tracks-header"></div>
-        <div class="canvasgrid">
+        <div class="canvasgrid" oncontextmenu="return false;">
             <!-- ko foreach: tracks -->
 	        <div class="shelf"></div>
             <!-- /ko -->
@@ -60,6 +60,7 @@
                 </svg>
             </div>
             <!-- /ko -->
+            <div class="box-select" data-bind="boxSelect: selection.onBoxSelect"></div>
         </div>
     </div>   
 </div>

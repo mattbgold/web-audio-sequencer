@@ -62,8 +62,11 @@ var Muzart;
             return clone;
         };
 
-	    var f = function(){alert('x/y/w/h not implemented');};
-	    Selectable.call(self, f, f, f, f);
+        var getX = function () { return self.on * viewModel.gridState.gridBaseWidth(); };
+        var getY = function () { return self.top * viewModel.gridState.rowHeight(); };
+        var getW = function () { return self.len * viewModel.gridState.gridBaseWidth(); };
+        var getH = function () { return viewModel.gridState.rowHeight(); };
+        Selectable.call(self, getX, getY, getW, getH);
 	};
 
 	Muzart.NoteTrack = function(num) {
@@ -91,16 +94,16 @@ var Muzart;
 		    return note;
 		};
 
-        //TODO: get rid of all references to viewModel, lets only use this for previewing note and have a MIDIPlayer object handle all playback outside of here
+        //TODO: get rid of all references to viewModel
 		self.play = function () {
 		    MIDI.noteOn(0, (108 - self.top), self.vel, 0);
 		    MIDI.noteOff(0, (108 - self.top), .1);
 		}
 
-		var getX = function () { return self.on * viewModel.gridState.gridBaseWidth(); };
-		var getY = function () { return self.top * viewModel.gridState.rowHeight(); };
-		var getW = function () { return self.len * viewModel.gridState.gridBaseWidth(); };
-		var getH = function () { return viewModel.gridState.rowHeight(); };
+		var getX = function () { return self.on * viewModel.pianoRoll.gridState.gridBaseWidth(); };
+		var getY = function () { return self.top * viewModel.pianoRoll.gridState.rowHeight(); };
+		var getW = function () { return self.len * viewModel.pianoRoll.gridState.gridBaseWidth(); };
+		var getH = function () { return viewModel.pianoRoll.gridState.rowHeight(); };
 
 		Selectable.call(self, getX, getY, getW, getH);
 	};
