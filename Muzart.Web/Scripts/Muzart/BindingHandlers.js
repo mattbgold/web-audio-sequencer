@@ -227,51 +227,96 @@
 		}
 	};
 	
-	ko.bindingHandlers.boxSelect = {
-		init: function(element, valueAccessor, allBindings) {
-			var onSelect = valueAccessor();
-			var $container = $(element).parent();
-			var hidden = true;
-			var x1=0, x2=0, y1=0, y2=0;
-			var reCalc = function () {
-				var x3 = Math.min(x1,x2);
-				var x4 = Math.max(x1,x2);
-				var y3 = Math.min(y1,y2);
-				var y4 = Math.max(y1,y2);
-				element.style.left = x3 + 'px';
-				element.style.top = y3 + 'px';
-				element.style.width = x4 - x3 + 'px';
-				element.style.height = y4 - y3 + 'px';
-			};
-			
-			var offset = $container.offset();
-			
-			$container.mousedown(function(e) {
-				if(e.ctrlKey) {
-					$(element).show();
-					hidden=false;
-					x1 = e.pageX - offset.left;
-					y1 = e.pageY - offset.top;
-					reCalc();
-				}
-			}).mousemove(function(e) {
-				if(!hidden) {
-					x2 = e.pageX - offset.left;
-					y2 = e.pageY - offset.top;
-					reCalc();
-				}
-			}).mouseup(function(e) {
-				if(!hidden) {
-					var x3 = Math.min(x1,x2);
-					var x4 = Math.max(x1,x2);
-					var y3 = Math.min(y1,y2);
-					var y4 = Math.max(y1,y2);
-					
-					onSelect(x3, x4, y3, y4);
-					$(element).hide();
-				}
-			});
-		}
-	}
+    ko.bindingHandlers.boxSelect = {
+        init: function (element, valueAccessor, allBindings) {
+            var onSelect = valueAccessor();
+            var $container = $(element).parent();
+            var hidden = true;
+            var x1 = 0, x2 = 0, y1 = 0, y2 = 0;
+            var reCalc = function () {
+                var x3 = Math.min(x1, x2);
+                var x4 = Math.max(x1, x2);
+                var y3 = Math.min(y1, y2);
+                var y4 = Math.max(y1, y2);
+                element.style.left = x3 + 'px';
+                element.style.top = y3 + 'px';
+                element.style.width = x4 - x3 + 'px';
+                element.style.height = y4 - y3 + 'px';
+            };
+
+            var offset = $container.offset();
+
+            $container.mousedown(function (e) {
+                if (e.ctrlKey) {
+                    $(element).show();
+                    hidden = false;
+                    x1 = e.pageX - offset.left;
+                    y1 = e.pageY - offset.top;
+                    reCalc();
+                }
+            }).mousemove(function (e) {
+                if (!hidden) {
+                    x2 = e.pageX - offset.left;
+                    y2 = e.pageY - offset.top;
+                    reCalc();
+                }
+            }).mouseup(function (e) {
+                if (!hidden) {
+                    var x3 = Math.min(x1, x2);
+                    var x4 = Math.max(x1, x2);
+                    var y3 = Math.min(y1, y2);
+                    var y4 = Math.max(y1, y2);
+
+                    onSelect(x3, x4, y3, y4);
+                    $(element).hide();
+                }
+            });
+        }
+    };
+
+    ko.bindingHandlers.perfectScrollbar = {
+        init: function (element, valueAccessor) {
+            $(element).css('position', 'relative');
+            $(element).perfectScrollbar();
+        },
+        update: function (element, valueAccessor) {
+            $(element).perfectScrollbar('update');
+        }
+    };
+
+    ko.bindingHandlers.dialog = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+            var options = ko.utils.unwrapObservable(valueAccessor()) || {};
+            var isOpen = allBindingsAccessor().dialogVisible;
+            var dialog;
+
+            $(element).hide();
+
+            isOpen.subscribe(function (newValue) {
+                if (newValue) {
+                    dialog = bootbox.dialog($.extend(options, {
+                        message: $(element).html()
+                    }));
+                }
+                else {
+                    dialog.modal('hide');
+                }
+            });
+        },
+        update: function (element, valueAccessor, allBindingsAccessor) {
+            /*var options = ko.utils.unwrapObservable(valueAccessor()) || {};
+            if ($(element).hasClass('ui-dialog-content')) {
+                if (options.title) {
+                    $(element).dialog('option', 'title', options.title);
+                }
+                if (options.buttons) {
+                    $(element).dialog('option', 'buttons', options.buttons);
+                }
+                if (options.width) {
+                    $(element).dialog('option', 'width', options.width);
+                }
+            }*/
+        }
+    };
 		
 })(jQuery);

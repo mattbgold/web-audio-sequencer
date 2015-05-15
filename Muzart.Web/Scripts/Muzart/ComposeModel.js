@@ -48,5 +48,17 @@
                 self.pianoRoll.playRoll();
             }
         }
+
+        self.showPianoRoll = ko.observable(false);
+        self.showPianoRoll.subscribe(function (v) {
+            if (v) {
+                $('#composition').hide();
+                $('#rollcomponent').show();
+            }
+            else {
+                $('#composition').show();
+                $('#rollcomponent').hide();
+            }
+        });
     };
 })(jQuery, Muzart || (Muzart = {}));

@@ -5,6 +5,7 @@
 @Styles.Render("~/Content/muzartcompose")
 
 
+
 <div class="player row">
     <div class="col-md-12">
         <div class="input-group input-group-lg bpm pull-left">
@@ -27,47 +28,47 @@
     <input class="" type="range" min="3" max="5" data-bind="value: gridState.snapMode" /> -->
 
     
-
-<div class="row tracks-container">
-    <div class="col-xs-2 col-reset">
-        <div class="tracks-header">
-            <input class="zoomrange" type="range" min="1" max="6" step="any" data-bind="value: gridState.zoomLevel, valueUpdate: 'input'" />
-        </div>
-        <!-- ko foreach: tracks -->
-	    <div class="instrument">
-            <button class="btn btn-link" data-bind="click: $parent.removeTrack" ><i class="fa fa-remove"></i></button>
-            <div class="btn-group" role="group" aria-label="...">
-                <button type="button" class="btn btn-xs btn-default"><i class="fa fa-fw fa-headphones"></i></button>
-                <button type="button" class="btn btn-xs btn-default"><i class="fa fa-fw fa-volume-off"></i></button>
+<div id="composition">
+    <div  class="row tracks-container">
+        <div class="col-xs-2 col-reset">
+            <div class="tracks-header">
+                <input class="zoomrange" type="range" min="1" max="6" step="any" data-bind="value: gridState.zoomLevel, valueUpdate: 'input'" />
             </div>
-            <select class="form-control" data-bind="options: $root.instruments, value: instrument"></select>
-	    </div>
-        <!-- /ko -->
-    </div>
-    <div class="col-xs-10 col-reset">
-        <div class="tracks-header"></div>
-        <div class="canvasgrid" oncontextmenu="return false;">
             <!-- ko foreach: tracks -->
-	        <div class="shelf"></div>
+	        <div class="instrument">
+                <button class="btn btn-link" data-bind="click: $parent.removeTrack" ><i class="fa fa-remove"></i></button>
+                <div class="btn-group" role="group" aria-label="...">
+                    <button type="button" class="btn btn-xs btn-default"><i class="fa fa-fw fa-headphones"></i></button>
+                    <button type="button" class="btn btn-xs btn-default"><i class="fa fa-fw fa-volume-off"></i></button>
+                </div>
+                <select class="form-control" data-bind="options: $root.instruments, value: instrument"></select>
+	        </div>
             <!-- /ko -->
-            <!-- ko foreach: canvases -->
-            <div class="canvas" data-bind="selectGridElement: $root.gridState.gridSnapWidth, css: { 'is-selected': isSelected }">
-                <svg height="100%" width="100%">
-                    <!-- foreach notes -->
-                    <line x1="20%" y1="10%" x2="50%" y2="10%" style="stroke:rgb(150,150,150);stroke-width:2" /> 
-                    <line x1="18%" y1="30%" x2="20%" y2="30%" style="stroke:rgb(150,150,150);stroke-width:2" /> 
-                    <line x1="30%" y1="50%" x2="40%" y2="50%" style="stroke:rgb(150,150,150);stroke-width:2" /> 
-                </svg>
-            </div>
-            <!-- /ko -->
-            <div class="box-select" data-bind="boxSelect: selection.onBoxSelect"></div>
         </div>
-    </div>   
+        <div class="col-xs-10 col-reset">
+            <div class="tracks-header"></div>
+            <div class="canvasgrid" oncontextmenu="return false;">
+                <!-- ko foreach: tracks -->
+	            <div class="shelf"></div>
+                <!-- /ko -->
+                <!-- ko foreach: canvases -->
+                <div class="canvas" data-bind="selectGridElement: $root.gridState.gridSnapWidth, css: { 'is-selected': isSelected }">
+                    <svg height="100%" width="100%">
+                        <!-- ko foreach: notes -->
+                        <line x1="20%" y1="10%" x2="50%" y2="10%" style="stroke:rgb(150,150,150);stroke-width:2" data-bind="attr: { x1: ($data.on*$root.gridState.gridBaseWidth())+'px' }" /> 
+                        <!-- /ko -->
+                    </svg>
+                </div>
+                <!-- /ko -->
+                <div class="box-select" data-bind="boxSelect: selection.onBoxSelect"></div>
+            </div>
+        </div>   
+    </div>
+    <button class="btn btn-default" data-bind="click: addTrack"><i class="fa fa-plus"></i> Add Track</button>
 </div>
+<piano-roll style="display:none;" id="rollcomponent" params="model: $root.pianoRoll"></piano-roll>
 
-<button class="btn btn-default" data-bind="click: addTrack"><i class="fa fa-plus"></i> Add Track</button>
-
-<piano-roll params="model: $root.pianoRoll"></piano-roll>
+<!--<div data-bind="dialog: {}, dialogVisible: showPianoRoll"><piano-roll id="rollcomponent" params="model: $root.pianoRoll"></piano-roll></div>-->
 
 @section Scripts {
     @Scripts.Render("~/bundles/midi")
@@ -95,6 +96,7 @@
         $(document).bind('keydown', 'ctrl+x', viewModel.selection.cutSelection);
         $(document).bind('keydown', 'ctrl+v', viewModel.selection.pasteSelection);
         $(document).bind('keydown', 'space', viewModel.playToggle);
+
 
         MIDI.loadPlugin({
             soundfontUrl: '@Url.Content("~/Content/Muzart/soundfont/")',

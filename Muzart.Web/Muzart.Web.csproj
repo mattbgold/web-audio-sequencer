@@ -145,6 +145,8 @@
     <Content Include="Content\Muzart\midi\overworld1.mid" />
     <Content Include="Content\Muzart\PianoRoll.css" />
     <Content Include="Content\Muzart\soundfont\acoustic_grand_piano-ogg.js" />
+    <Content Include="Content\perfect-scrollbar.css" />
+    <Content Include="Content\perfect-scrollbar.min.css" />
     <Content Include="Content\themes\base\accordion.css" />
     <Content Include="Content\themes\base\all.css" />
     <Content Include="Content\themes\base\autocomplete.css" />
@@ -189,6 +191,8 @@
     <Content Include="Content\bootstrap-theme.css.map" />
     <Content Include="Content\bootstrap.css.map" />
     <Content Include="Icon.png" />
+    <Content Include="Scripts\bootbox.js" />
+    <Content Include="Scripts\bootbox.min.js" />
     <Content Include="Scripts\bootstrap.js" />
     <Content Include="Scripts\bootstrap.min.js" />
     <Content Include="fonts\fontawesome-webfont.woff" />
@@ -238,6 +242,7 @@
     <Content Include="Scripts\midi\util\dom_request_xhr.js" />
     <Content Include="Scripts\Muzart\SelectionModel.js" />
     <Content Include="Scripts\npm.js" />
+    <Content Include="Scripts\perfect-scrollbar.jquery.js" />
     <Content Include="Scripts\_references.js" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>

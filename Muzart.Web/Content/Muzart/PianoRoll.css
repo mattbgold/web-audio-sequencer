@@ -1,3 +1,6 @@
+.roll-and-keys {
+    height:400px;
+}
 .roll {
     border:1px solid black;
     box-sizing: border-box;
@@ -98,4 +101,13 @@
 	right: -5px;
 	top: 0;
 	height: 100%;
+}
+
+.ps-scrollbar-x {
+    background-color:white !important;
+    height:10px !important;
+}
+.ps-scrollbar-y {
+    background-color:white !important;
+    width:10px !important;
 }
