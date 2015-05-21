@@ -55,7 +55,7 @@ var Muzart;
             clone.isSelected(self.isSelected());
             var clonedNotes = [];
             for (var note in self.notes) {
-                clonedNotes.push(note.clone());
+                clonedNotes.push(self.notes[note].clone());
             }
             clone.notes = clonedNotes;
 

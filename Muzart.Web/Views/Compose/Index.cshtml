@@ -23,6 +23,9 @@
         
     </div>  
 </div>
+<div class="roll-header" data-bind="visible: showPianoRoll">
+    <button class="btn btn-success btn-lg" data-bind="click:saveRoll"><i class="fa fa-check"></i> Confirm</button>
+</div>
 
 <!--Snap Width: <span data-bind="text:snapLengthText"></span>
     <input class="" type="range" min="3" max="5" data-bind="value: gridState.snapMode" /> -->
@@ -52,7 +55,8 @@
 	            <div class="shelf"></div>
                 <!-- /ko -->
                 <!-- ko foreach: canvases -->
-                <div class="canvas" data-bind="selectGridElement: $root.gridState.gridSnapWidth, css: { 'is-selected': isSelected }">
+                <div class="canvas" data-bind="selectGridElement: $root.gridState.gridSnapWidth, css: { 'is-selected': isSelected }, dblClick: $root.loadedCanvas">
+                    <button class="btn btn-sm btn-link btn-canvas-edit" data-bind="click: $root.loadedCanvas"><i class="fa fa-pencil"></i></button>
                     <svg height="100%" width="100%">
                         <!-- ko foreach: notes -->
                         <line x1="20%" y1="10%" x2="50%" y2="10%" style="stroke:rgb(150,150,150);stroke-width:2" data-bind="attr: { x1: ($data.on*$root.gridState.gridBaseWidth())+'px' }" /> 

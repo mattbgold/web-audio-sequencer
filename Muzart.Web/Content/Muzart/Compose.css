@@ -93,3 +93,16 @@
 .tracks-header {
     height:20px;
 }
+
+.btn-canvas-edit {
+    display:none;
+    position:absolute;
+    left:0;
+    top:0;
+}
+.canvas:hover > .btn-canvas-edit {
+    display:inline-block;
+}
+
+.roll-header {
+}

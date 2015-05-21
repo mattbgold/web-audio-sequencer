@@ -20,7 +20,7 @@
         self.gridState = new Muzart.SnapZoomGridModel(.15625, 70, 4, 4);
         self.selection = new Muzart.SelectionModel(self.canvases);
         self.player = new Muzart.PlayerModel();
-        self.pianoRoll = new Muzart.PianoRollModel(undefined, self.player);
+        self.pianoRoll = new Muzart.PianoRollModel(self.player);
 
         self.instruments = ['Piano', 'Instrument2', 'Instrument3'];
 
@@ -60,5 +60,26 @@
                 $('#rollcomponent').hide();
             }
         });
+
+        self.loadedCanvas = ko.observable();
+        self.loadedCanvas.subscribe(function (canvas) {
+            if (canvas) {
+                self.pianoRoll.load(canvas);
+                self.showPianoRoll(true);
+            }
+            else {
+                self.showPianoRoll(false);
+            }
+        });
+
+        self.saveRoll = function () {
+            //the piano roll should be working off a reference to the canvas notes already, so we dont need to copy notes
+            //create svg
+            $.each(self.loadedCanvas().notes, function (i, note) {
+                //add an svg line - lets do this in an update binding so that here we can just set an observable.
+            });
+            self.loadedCanvas(null);
+            
+        };
     };
 })(jQuery, Muzart || (Muzart = {}));

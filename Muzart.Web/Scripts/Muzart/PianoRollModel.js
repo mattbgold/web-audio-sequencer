@@ -3,10 +3,16 @@ dp = false;
 (function($, Muzart){
     'use strict';
     
-	Muzart.PianoRollModel = function(notes, player) {
+	Muzart.PianoRollModel = function(player) {
 		var self = this;
 		
-		var _lastNote = notes ? notes[notes.length - 1] : null;
+		var _lastNote = null;
+        
+		self.load = function (canvas) {
+		    _lastNote = canvas.notes.length ? canvas.notes[canvas.notes.length - 1] : null;
+		    self.measuresInRoll(_lastNote ? Math.ceil((_lastNote.on + _lastNote.len) / self.baseNotesToMakeQuarterNote / 4) : 8);
+		    self.notes(canvas.notes);
+		};
 
 		self.player = player;
 		self.playRoll = function () {
@@ -18,7 +24,7 @@ dp = false;
 		//self.bpm = ko.observable(120);
 		self.tracks = [];
 		self.notes = ko.observableArray([]);
-		self.measuresInRoll = ko.observable(_lastNote ? Math.ceil((_lastNote.on + _lastNote.len) / self.baseNotesToMakeQuarterNote / 4) : 8);
+		self.measuresInRoll = ko.observable(8);
 
 		self.gridState = new Muzart.SnapZoomGridModel(self.widthOfQuarterNoteAtNoZoom / self.baseNotesToMakeQuarterNote, 20, 4);
 		self.selection = new Muzart.SelectionModel(self.notes);

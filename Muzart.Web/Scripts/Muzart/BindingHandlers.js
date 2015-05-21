@@ -319,4 +319,9 @@
         }
     };
 		
+    ko.bindingHandlers.dblClick = {
+        init: function (element, valueAccessor, allBindings, bindingContext) {
+            $(element).on('dblclick', function () { valueAccessor()(bindingContext) });
+        }
+    }
 })(jQuery);
