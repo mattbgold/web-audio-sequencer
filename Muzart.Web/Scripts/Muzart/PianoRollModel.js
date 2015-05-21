@@ -10,7 +10,7 @@ dp = false;
         
 		self.load = function (canvas) {
 		    _lastNote = canvas.notes.length ? canvas.notes[canvas.notes.length - 1] : null;
-		    self.measuresInRoll(_lastNote ? Math.ceil((_lastNote.on + _lastNote.len) / self.baseNotesToMakeQuarterNote / 4) : 8);
+		    self.measuresInRoll(canvas.len/self.baseNotesToMakeQuarterNote / 4); //_lastNote ? Math.ceil((_lastNote.on + _lastNote.len) / self.baseNotesToMakeQuarterNote / 4) : 8
 		    self.notes(canvas.notes);
 		};
 

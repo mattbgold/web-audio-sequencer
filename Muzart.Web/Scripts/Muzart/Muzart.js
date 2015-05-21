@@ -45,7 +45,7 @@ var Muzart;
         self.on = on || 0; //starting point in base notes. 
 	    self.loopAmount = 1; //1 is no loop. Loop amount is a multiplier floating point;
 	    self.top = top || 0; //determines which track we are in
-	    self.len = len || 4;
+	    self.len = len || 4; 
         self.prevTop = null;
 
         //open piano roll from canvas
