@@ -23,7 +23,7 @@
 	z-index:100;
 }
 .keys {
-	background-image:url('Images/keys.jpg');
+	background-image:url('../Images/keys.jpg');
 	background-repeat:repeat-y;
 	background-position: 0px 20px;
 	height:1760px;
@@ -46,19 +46,19 @@
     position:absolute;
 }
 .track-1 {
-	background-image: url('Images/track1.png')
+	background-image: url('../Images/track1.png')
 }
 .track-2 {
-	background-image: url('Images/track2.png')
+	background-image: url('../Images/track2.png')
 }
 .track-3 {
-	background-image: url('Images/track3.png')
+	background-image: url('../Images/track3.png')
 }
 .track-4 {
-	background-image: url('Images/track4.png')
+	background-image: url('../Images/track4.png')
 }
 .track-5 {
-	background-image: url('Images/track5.png')
+	background-image: url('../Images/track5.png')
 }
 .track:hover {
     border-top: 1px solid #AAA;

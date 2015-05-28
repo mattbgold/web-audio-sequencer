@@ -49,7 +49,7 @@ namespace Muzart.Web
 
 
             bundles.Add(new StyleBundle("~/Content/css").Include("~/Content/site.css"));
-            bundles.Add(new StyleBundle("~/Content/muzartcompose").Include(
+            bundles.Add(new StyleBundle("~/Content/Muzart/muzartcompose").Include(
                 "~/Content/perfect-scrollbar.css",
                 "~/Content/Muzart/Compose.css",
                 "~/Content/Muzart/PianoRoll.css"));

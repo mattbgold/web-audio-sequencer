@@ -66,6 +66,7 @@
             if (canvas) {
                 self.pianoRoll.load(canvas);
                 self.showPianoRoll(true);
+                self.loadedCanvas().notesToDraw(null);
             }
             else {
                 self.showPianoRoll(false);
@@ -75,9 +76,7 @@
         self.saveRoll = function () {
             //the piano roll should be working off a reference to the canvas notes already, so we dont need to copy notes
             //create svg
-            $.each(self.loadedCanvas().notes, function (i, note) {
-                //add an svg line - lets do this in an update binding so that here we can just set an observable.
-            });
+            self.loadedCanvas().notesToDraw(self.loadedCanvas().notes);
             self.loadedCanvas(null);
             
         };

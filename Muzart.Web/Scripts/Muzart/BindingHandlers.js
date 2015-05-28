@@ -324,4 +324,55 @@
             $(element).on('dblclick', function () { valueAccessor()(bindingContext) });
         }
     }
+
+    ko.bindingHandlers.contextMenu = {
+        init: function (element, valueAccessor, allBindingsAccessor) {
+            var menuActions = ko.utils.unwrapObservable(valueAccessor());
+            var menuId = 'menu-' + Math.random().toString(36);
+            $(element).on('contextmenu', function (e) {
+                //ctrl-context-menu designated for different function
+                $('.dropdown-menu').remove();
+                if (e.ctrlKey) return;
+
+                //open menu
+                var $menu = $('<ul class="dropdown-menu" role="menu"></ul>').attr('id', menuId).data("invokedOn", $(e.target))
+                    .insertAfter('body').show()
+                    .css({
+                        position: "absolute",
+                        left: getMenuPosition(e.clientX, 'width', 'scrollLeft'),
+                        top: getMenuPosition(e.clientY, 'height', 'scrollTop')
+                    })
+                    .off('click')
+                    .on('click', function (e) {
+                        $(this).remove();
+                    });
+
+                for (var i in menuActions) {
+                    var action = menuActions[i];
+                    $menu.append($('<li></li>').append($('<a tabindex="-1" href="#"><i class="fa fa-fw ' + action.icon + '"></i> ' + action.text + '</a>').on('click', action.handler)));
+                }
+
+                return false;
+
+            });
+
+            //make sure menu closes on any click
+            $(document).click(function () {
+                $('.dropdown-menu').remove();
+            });
+
+            function getMenuPosition(mouse, direction, scrollDir) {
+                var win = $(window)[direction](),
+                    scroll = $(window)[scrollDir](),
+                    menu = $('.dropdown-menu')[direction](),
+                    position = mouse + scroll;
+
+                // opening menu would pass the side of the page
+                if (mouse + menu > win && menu < mouse)
+                    position -= menu;
+
+                return position;
+            }
+        }
+    }
 })(jQuery);

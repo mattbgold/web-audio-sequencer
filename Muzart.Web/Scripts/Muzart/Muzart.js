@@ -42,6 +42,7 @@ var Muzart;
         var self = this;
 	    
         self.notes = [];
+        self.notesToDraw = ko.observableArray([]);
         self.on = on || 0; //starting point in base notes. 
 	    self.loopAmount = 1; //1 is no loop. Loop amount is a multiplier floating point;
 	    self.top = top || 0; //determines which track we are in
@@ -58,6 +59,7 @@ var Muzart;
                 clonedNotes.push(self.notes[note].clone());
             }
             clone.notes = clonedNotes;
+            clone.notesToDraw(clone.notes);
 
             return clone;
         };
@@ -96,8 +98,12 @@ var Muzart;
 
         //TODO: get rid of all references to viewModel
 		self.play = function () {
-		    MIDI.noteOn(0, (108 - self.top), self.vel, 0);
-		    MIDI.noteOff(0, (108 - self.top), .1);
+		    try
+		    {
+		        MIDI.noteOn(0, (108 - self.top), self.vel, 0);
+		        MIDI.noteOff(0, (108 - self.top), .1);
+		    }
+		    catch (err) { }
 		}
 
 		var getX = function () { return self.on * viewModel.pianoRoll.gridState.gridBaseWidth(); };

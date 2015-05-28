@@ -2,7 +2,7 @@
     ViewBag.Title = "Index";
 }
 
-@Styles.Render("~/Content/muzartcompose")
+@Styles.Render("~/Content/Muzart/muzartcompose")
 
 
 
@@ -55,11 +55,11 @@
 	            <div class="shelf"></div>
                 <!-- /ko -->
                 <!-- ko foreach: canvases -->
-                <div class="canvas" data-bind="selectGridElement: $root.gridState.gridSnapWidth, css: { 'is-selected': isSelected }, dblClick: $root.loadedCanvas">
+                <div class="canvas" data-bind="selectGridElement: $root.gridState.gridSnapWidth, css: { 'is-selected': isSelected }, dblClick: $root.loadedCanvas, contextMenu: [{icon: 'fa-music', text: 'Example Action', handler: function(){}}, {icon: 'fa-trash', text: 'Another', handler: function(){}}]">
                     <button class="btn btn-sm btn-link btn-canvas-edit" data-bind="click: $root.loadedCanvas"><i class="fa fa-pencil"></i></button>
                     <svg height="100%" width="100%">
-                        <!-- ko foreach: notes -->
-                        <line x1="20%" y1="10%" x2="50%" y2="10%" style="stroke:rgb(150,150,150);stroke-width:2" data-bind="attr: { x1: ($data.on*$root.gridState.gridBaseWidth())+'px' }" /> 
+                        <!-- ko foreach: notesToDraw -->
+                        <line style="stroke:rgb(150,150,150);stroke-width:2" data-bind="attr: { x1: ($data.on*$root.gridState.gridBaseWidth())+'px', x2: (($data.on+$data.len)*$root.gridState.gridBaseWidth())+'px', y1:($data.top/108)*100 + '%',y2:($data.top/108)*100 + '%'  }" /> 
                         <!-- /ko -->
                     </svg>
                 </div>
@@ -101,17 +101,20 @@
         $(document).bind('keydown', 'ctrl+v', viewModel.selection.pasteSelection);
         $(document).bind('keydown', 'space', viewModel.playToggle);
 
-
-        MIDI.loadPlugin({
-            soundfontUrl: '@Url.Content("~/Content/Muzart/soundfont/")',
-            instrument: "acoustic_grand_piano", //acoustic_grand_piano
-            onprogress: function (state, progress) {
-                console.log(state, progress);
-            },
-            onsuccess: function () {
-                viewModel.midiLoaded(true);
-            }
-        });
+        try
+        {
+            MIDI.loadPlugin({
+                soundfontUrl: '@Url.Content("~/Content/Muzart/soundfont/")',
+                instrument: "acoustic_grand_piano", //acoustic_grand_piano
+                onprogress: function (state, progress) {
+                    console.log(state, progress);
+                },
+                onsuccess: function () {
+                    viewModel.midiLoaded(true);
+                }
+            });
+        }
+        catch (err) { }
     });
     var viewModel = new Muzart.ComposeModel();
 
