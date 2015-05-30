@@ -18,7 +18,8 @@
         };
 
         self.gridState = new Muzart.SnapZoomGridModel(.15625, 70, 4, 4);
-        self.selection = new Muzart.SelectionModel(self.canvases);
+        self.canvasSelection = new Muzart.SelectionModel(self.canvases);
+        self.selection = self.canvasSelection;
         self.player = new Muzart.PlayerModel();
         self.pianoRoll = new Muzart.PianoRollModel(self.player);
 
@@ -65,20 +66,41 @@
         self.loadedCanvas.subscribe(function (canvas) {
             if (canvas) {
                 self.pianoRoll.load(canvas);
+                self.selection.deselectAll();
+                self.selection = self.pianoRoll.selection;
                 self.showPianoRoll(true);
                 self.loadedCanvas().notesToDraw(null);
             }
             else {
+                self.selection.deselectAll();
+                self.selection = self.canvasSelection;
                 self.showPianoRoll(false);
             }
         });
 
         self.saveRoll = function () {
-            //the piano roll should be working off a reference to the canvas notes already, so we dont need to copy notes
-            //create svg
             self.loadedCanvas().notesToDraw(self.loadedCanvas().notes);
             self.loadedCanvas(null);
             
+        };
+
+        self.selectAll = function () {
+            self.selection.selectAll();
+        };
+        self.deselectAll = function () {
+            self.selection.deselectAll();
+        };
+        self.deleteSelection = function () {
+            self.selection.deleteSelection();
+        };
+        self.copySelection = function () {
+            self.selection.copySelection();
+        };
+        self.cutSelection = function () {
+            self.selection.cutSelection();
+        };
+        self.pasteSelection = function () {
+            self.selection.pasteSelection();
         };
     };
 })(jQuery, Muzart || (Muzart = {}));

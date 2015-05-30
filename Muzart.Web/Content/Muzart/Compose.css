@@ -14,9 +14,9 @@
     .player .player-buttons {
         margin-left:10px;
     }
-    .player .btn.active {
-        color: rgb(0, 142, 229);
-    }
+.btn.active {
+    color: rgb(0, 142, 229);
+}
 .tracks-container {
     margin: 20px 0;
 }

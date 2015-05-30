@@ -58,6 +58,14 @@ dp = false;
 			setTimeout(function(){if(Muzart.inputs.mouseLeft){dp=true;$('.note').last().trigger(event);}}, 100);
 		};
 
+		self.noteClicked = function (noteModel, e) {
+		    self.removeNote(noteModel, e);
+		    if (e.which === 1 && dp === false) {
+		        noteModel.play();
+		    }
+		    dp = false;
+		};
+
 		self.trackZoomClass = ko.pureComputed(function() {
 		    return 'track-' + self.gridState.zoomLevel();
 		});

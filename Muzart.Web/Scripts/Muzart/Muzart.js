@@ -36,6 +36,21 @@ var Muzart;
         self.mute = ko.observable(false);
         self.solo = ko.observable(false);
         self.volume = ko.observable(1);
+
+        //TODO: toggle binding extender that adds a observable.toggle
+        self.soloToggle = function () {
+            self.solo(!self.solo());
+            if (self.solo()) {
+                self.mute(false);
+            }
+        };
+
+        self.muteToggle = function () {
+            self.mute(!self.mute());
+            if (self.mute()) {
+                self.solo(false);
+            }
+        };
     };
 
     Muzart.Canvas = function (top, on, len) {

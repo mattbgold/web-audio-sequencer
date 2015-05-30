@@ -43,9 +43,16 @@
 
         self.affectSelection = function (objs) {
             //add, remove, objects from selection using inputs to determine
+            if (objs.length === 1 && !objs[0].isSelected() && !Muzart.inputs.ctrl()) {
+                //deselect all when we click something that is not selected, i.e. "click out"
+                self.deselectAll();
+                return;
+            }
+
             if (Muzart.inputs.ctrl() && !Muzart.inputs.shift() && !Muzart.inputs.alt()) {
                 self.deselectAll();
             }
+            
             $.each(objs, function (i, obj) {
                 if (Muzart.inputs.ctrl() && Muzart.inputs.alt()) {
                     obj.isSelected(false);
