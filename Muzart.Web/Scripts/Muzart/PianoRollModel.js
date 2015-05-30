@@ -14,6 +14,8 @@ dp = false;
 		    self.notes(canvas.notes);
 		};
 
+		var _trackNum = 88;
+
 		self.player = player;
 		self.playRoll = function () {
 		    self.player.play(self.notes());
@@ -30,7 +32,7 @@ dp = false;
 		self.selection = new Muzart.SelectionModel(self.notes);
 		
 	    //init
-		for (var i = 0; i < 88; i++) {
+		for (var i = 0; i < _trackNum; i++) {
 		    self.tracks.push(new Muzart.NoteTrack(i));
 		}
 

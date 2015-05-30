@@ -21,7 +21,7 @@
 	border: 1px dashed White;
 	position: absolute;
 	z-index:100;
-}
+}/*
 .keys {
 	background-image:url('../Images/keys.jpg');
 	background-repeat:repeat-y;
@@ -30,7 +30,7 @@
 	width:100px;
 	position:absolute;
     z-index:10;
-}
+}*/
 .track{
     padding:0;
     margin:0;
@@ -110,4 +110,45 @@
 .ps-scrollbar-y {
     background-color:white !important;
     width:10px !important;
+}
+
+.keyboard {
+    height:1760px;
+	width:100px;
+	position:absolute;
+    z-index:10;
+}
+.key {
+    position: relative;
+    height:30px;
+    border: 1px solid black;
+    box-sizing: border-box;
+}
+.key-black {
+    background-color:Black;
+    height:20px;
+    width:85%;
+    left:0;
+    top:-10px;
+    z-index:1;
+    margin-bottom:-20px;
+    color:white;
+}
+.key-white {
+    background-color:White;
+    color: black;
+}
+.key-white.key-white-sandwiched {
+    height:40px;
+    padding-top:10px;
+}
+.key-white.key-white-blackontop {
+    padding-top:10px;
+}
+.key-white.key-white-blackonbottom {
+    padding-top: 0px;
+}
+.key-white.key-white-tippytop {
+    padding-top: 0px;
+    height:20px;
 }

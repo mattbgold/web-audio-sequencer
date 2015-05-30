@@ -90,8 +90,42 @@ var Muzart;
 		var self = this;
 		
 		self.num = num;
-		self.noteText = function () {
-		    return MIDI.noteToKey[108 - self.num];
+		self.noteText = function (num) {
+		    return MIDI.noteToKey[108 - (num || self.num)];
+		};
+		self.noteClass = function () {
+		    //0 = C white
+		    //1- B
+		    //2 = A#
+		    //3 = A
+            var cls = ""
+            if (self.noteText().length === 2) {
+                cls += 'key-white ';
+                if(num ===0) {
+                    cls+='key-white-tippytop';
+                }
+                else if (num === 87) {
+                    cls+='key-white-blackontop';
+                }
+                else {
+                    var blackonbottom = self.noteText(self.num + 1).length > 2;
+                    var blackontop = self.noteText(self.num - 1).length > 2;
+                    if (blackontop && blackonbottom) {
+                        cls += 'key-white-sandwiched';
+                    }
+                    else if (blackontop) {
+                        cls += 'key-white-blackontop';
+                    }
+                    else {
+                        cls += 'key-white-blackonbottom';
+                    }
+                }
+            }
+            else {
+                cls += 'key-black';
+            }
+
+            return cls;
 		};
 	};
 

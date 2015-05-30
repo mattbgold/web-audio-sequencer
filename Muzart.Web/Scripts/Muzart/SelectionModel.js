@@ -43,9 +43,13 @@
 
         self.affectSelection = function (objs) {
             //add, remove, objects from selection using inputs to determine
-            if (objs.length === 1 && !objs[0].isSelected() && !Muzart.inputs.ctrl()) {
+            if (objs.length === 1 && !Muzart.inputs.ctrl()) {
                 //deselect all when we click something that is not selected, i.e. "click out"
-                self.deselectAll();
+                if (!objs[0].isSelected()) {
+                    self.deselectAll();
+                    objs[0].isSelected(true);
+                }
+                
                 return;
             }
 
