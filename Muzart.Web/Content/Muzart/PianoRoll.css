@@ -21,16 +21,7 @@
 	border: 1px dashed White;
 	position: absolute;
 	z-index:100;
-}/*
-.keys {
-	background-image:url('../Images/keys.jpg');
-	background-repeat:repeat-y;
-	background-position: 0px 20px;
-	height:1760px;
-	width:100px;
-	position:absolute;
-    z-index:10;
-}*/
+}
 .track{
     padding:0;
     margin:0;
@@ -113,7 +104,6 @@
 }
 
 .keyboard {
-    height:1760px;
 	width:100px;
 	position:absolute;
     z-index:10;
@@ -123,9 +113,11 @@
     height:30px;
     border: 1px solid black;
     box-sizing: border-box;
+    font-size: smaller;
+    border-radius: 3px;
 }
 .key-black {
-    background-color:Black;
+    background-color:rgb(20,20,20);
     height:20px;
     width:85%;
     left:0;
@@ -151,4 +143,12 @@
 .key-white.key-white-tippytop {
     padding-top: 0px;
     height:20px;
+}
+.key.key-is-active {
+	background-color: Yellow;
+	color: Black;
+}
+.key:hover {
+    border-color: #AAA;
+    cursor: pointer;
 }

@@ -139,7 +139,6 @@
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
     <Content Include="Content\Muzart\Compose.css" />
-    <Content Include="Content\Images\keys.jpg" />
     <Content Include="Content\Images\track1.png" />
     <Content Include="Content\Images\track2.png" />
     <Content Include="Content\Images\track3.png" />

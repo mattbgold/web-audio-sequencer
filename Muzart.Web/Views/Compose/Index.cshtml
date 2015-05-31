@@ -23,8 +23,12 @@
         
     </div>  
 </div>
-<div class="roll-header" data-bind="visible: showPianoRoll">
-    <button class="btn btn-success btn-lg" data-bind="click:saveRoll"><i class="fa fa-check"></i> Done Editing</button>
+<div class="row roll-header" data-bind="visible: showPianoRoll">
+    <div class="col-xs-12">
+        <button class="btn btn-success" data-bind="click:saveRoll"><i class="fa fa-check"></i> Done Editing</button>
+        Grid Snap: 
+        <select class="form-control form-reset" data-bind="options: pianoRoll.snapWidths, value: pianoRoll.gridState.snapMode, optionsText: 'text', optionsValue: 'value'"></select>
+    </div>
 </div>
 
 <!--Snap Width: <span data-bind="text:snapLengthText"></span>

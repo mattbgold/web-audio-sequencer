@@ -36,6 +36,7 @@ dp = false;
 		    self.tracks.push(new Muzart.NoteTrack(i));
 		}
 
+		self.snapWidths = [{ value: 0, text: '1/32nd Note' }, { value: 1, text: '1/16th Note' }, { value: 2, text: '1/8th Note' }, { value: 3, text: '1/4th Note' }];
 		self.snapLengthText = ko.pureComputed(function() {
 		    return '1/' + (self.baseNotesToMakeQuarterNote * 4 * self.gridState.gridBaseWidth() / self.gridState.gridSnapWidth())
 		});

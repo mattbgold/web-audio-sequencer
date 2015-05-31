@@ -127,6 +127,13 @@ var Muzart;
 
             return cls;
 		};
+		self.play = function () {
+		    try {
+		        MIDI.noteOn(0, (108 - self.num), 127, 0);
+		        MIDI.noteOff(0, (108 - self.num), .1);
+		    }
+		    catch (err) { }
+		}
 	};
 
 	Muzart.Note = function(top, on, len, vel) {
