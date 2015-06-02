@@ -9,13 +9,13 @@
         self.tracks = ko.observableArray([new Muzart.Track()]);
         self.canvases = ko.observableArray([new Muzart.Canvas(0,0,32*4)]);
 
-        self.getAllNotes = function () {
+        /*self.getAllNotes = function () {
             return [].concat(
                 $.map(self.canvases(), function (c, i) {
                     return c.notes;
                 })
             );
-        };
+        };*/
 
         self.gridState = new Muzart.SnapZoomGridModel(.15625, 70, 4, 4);
         self.canvasSelection = new Muzart.SelectionModel(self.canvases);
@@ -45,10 +45,33 @@
                 self.player.stop();
             }
             else {
-                //self.player.play(self.getAllNotes());
-                self.pianoRoll.playRoll();
+                if (self.loadedCanvas()) {
+                    self.player.play([self.loadedCanvas()], true);
+                }
+                else {
+                    self.player.play(self.canvases);
+                }
             }
         }
+
+        //TODO: move this into the selectGridElement
+        self.trackClicked = function (data, event) {
+            if (event.which !== 1 || event.ctrlKey) {
+                return false;
+            }
+            var $track = $(event.target);
+            var offset = $track.offset();
+            var trackClickX = event.clientX - offset.left;
+            var trackXSnap = (Math.floor(trackClickX / self.gridState.gridSnapWidth()) * self.gridState.gridSnapWidth()) / self.gridState.gridBaseWidth();
+
+            var newCanvas = new Muzart.Canvas(data.num, trackXSnap, self.gridState.gridResolution()*4);
+            //newNote.play();
+
+            self.canvases.push(newCanvas);
+
+            //retrigger event to start dragging as soon as note is created
+            setTimeout(function () { if (Muzart.inputs.mouseLeft) { dp = true; $('.canvas').last().trigger(event); } }, 100);
+        };
 
         self.showPianoRoll = ko.observable(false);
         self.showPianoRoll.subscribe(function (v) {

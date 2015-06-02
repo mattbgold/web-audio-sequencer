@@ -3,11 +3,11 @@ dp = false;
 (function($, Muzart){
     'use strict';
     
-	Muzart.PianoRollModel = function(player) {
+	Muzart.PianoRollModel = function() {
 		var self = this;
 		
 		var _lastNote = null;
-        
+
 		self.load = function (canvas) {
 		    _lastNote = canvas.notes.length ? canvas.notes[canvas.notes.length - 1] : null;
 		    self.measuresInRoll(canvas.len/self.baseNotesToMakeQuarterNote / 4); //_lastNote ? Math.ceil((_lastNote.on + _lastNote.len) / self.baseNotesToMakeQuarterNote / 4) : 8
@@ -16,10 +16,6 @@ dp = false;
 
 		var _trackNum = 88;
 
-		self.player = player;
-		self.playRoll = function () {
-		    self.player.play(self.notes());
-		};
 
 		self.widthOfQuarterNoteAtNoZoom = 10;
 		self.baseNotesToMakeQuarterNote = 8; //defines smallest possible note. value of 8 means 32nd note

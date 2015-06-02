@@ -144,6 +144,9 @@
     <Content Include="Content\Images\track3.png" />
     <Content Include="Content\Images\track4.png" />
     <Content Include="Content\Images\track5.png" />
+    <Content Include="Content\Muzart\Compose1.css">
+      <DependentUpon>Compose1.scss</DependentUpon>
+    </Content>
     <Content Include="Content\Muzart\midi\overworld1.mid" />
     <Content Include="Content\Muzart\PianoRoll.css" />
     <Content Include="Content\Muzart\soundfont\acoustic_grand_piano-ogg.js" />
@@ -201,9 +204,12 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\FontAwesome.otf" />
+    <Content Include="Content\Muzart\Compose1.scss" />
     <None Include="Properties\PublishProfiles\mattgold - FTP %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\mattgold - FTP %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\mattgold - FTP.pubxml" />
     <None Include="Properties\PublishProfiles\mattgold - Web Deploy %282%29.pubxml" />
+    <None Include="Properties\PublishProfiles\mattgold - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\mattgold - Web Deploy.pubxml" />
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.3.js" />
@@ -268,7 +274,6 @@
     <Content Include="Views\Shared\PianoRollComponent.cshtml" />
     <Content Include="Scripts\midi\jasmid\LICENSE" />
     <Content Include="Views\Shared\MuzartJS.cshtml" />
-    <Content Include="Views\Compose\IndexRol.cshtml" />
     <Content Include="Views\Compose\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>

@@ -22,14 +22,16 @@
         };
         self.noteQueue = [];
 
-        self.play = function (notesToPlay) {
+        self.play = function (canvasesToPlay, playImmediately) {
             //21 = A0, 108 = Gb7
             self.stop();
             self.startTime = new Date();
             updateInterval = setInterval(updatePlayTime, 20);
             MIDI.setVolume(0, 127);
-            ko.utils.arrayForEach(notesToPlay, function (note) {
-                self.noteQueue.push(setTimeout(function () { self.playNote(note) }, (note.on / self.bpmScale()) * 1000));
+            ko.utils.arrayForEach(ko.utils.unwrapObservable(canvasesToPlay), function (canvas) {
+                ko.utils.arrayForEach(canvas.notes, function (note) {
+                    self.noteQueue.push(setTimeout(function () { self.playNote(note) }, ((note.on + (playImmediately ? 0 : canvas.on)) / self.bpmScale()) * 1000));
+                });
             });
             self.isPlaying(true);
         };
