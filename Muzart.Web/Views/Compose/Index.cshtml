@@ -115,7 +115,7 @@
                 },
                 onsuccess: function () {
                     viewModel.midiLoaded(true);
-                    //TODO: factor all of this into a load function tied to toolbar
+                    //TODO: factor all of this into a load function tied to toolbar 
                     player = MIDI.Player;
                     player.timeWarp = 1;
                     //TODO: uncomment this for the ultimate performance test. 
@@ -136,6 +136,10 @@
                             currentTime = queuedTime - offset;
                             var event = obj[0].event;
                             if (event.type !== 'channel') {
+                                if (event.type === 'meta' && event.subtype === 'setTempo') {
+                                    var bpm = 1 / (event.microsecondsPerBeat / 1000000 / 60);
+                                    viewModel.player.bpm(bpm);
+                                }
                                 continue;
                             }
 

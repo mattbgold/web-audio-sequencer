@@ -8,7 +8,7 @@
    <div style="margin-left:100px;"></div>
 </div>
 
-<div class="roll-and-keys" data-bind="perfectScrollbar: {}">
+<div class="roll-and-keys" data-bind="perfectScrollbar: $root.loadedCanvas()">
     <div class="keyboard" data-bind="foreach: tracks">
         <div class="key" data-bind="text: noteText(), css: noteClass(), event: {mousedown:play}"></div>
     </div>

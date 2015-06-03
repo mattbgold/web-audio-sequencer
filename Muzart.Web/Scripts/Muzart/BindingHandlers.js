@@ -130,9 +130,10 @@
                 element.style.height = y4 - y3 + 'px';
             };
 
-            var offset = $container.offset();
+            
 
             $container.mousedown(function (e) {
+                var offset = $container.offset();
                 if (e.ctrlKey) {
                     $(element).show();
                     hidden = false;
@@ -141,6 +142,7 @@
                     reCalc();
                 }
             }).mousemove(function (e) {
+                var offset = $container.offset();
                 if (!hidden) {
                     x2 = e.pageX - offset.left;
                     y2 = e.pageY - offset.top;
@@ -166,7 +168,11 @@
             $(element).perfectScrollbar();
         },
         update: function (element, valueAccessor) {
-            $(element).perfectScrollbar('update');
+            if (ko.unwrap(valueAccessor())) {
+                element.scrollTop = 0;
+                element.scrollLeft = 0;
+                $(element).perfectScrollbar('update');
+            }
         }
     };
 

@@ -20,7 +20,7 @@
         self.gridState = new Muzart.SnapZoomGridModel(.15625, 70, 4, 4);
         self.canvasSelection = new Muzart.SelectionModel(self.canvases);
         self.selection = self.canvasSelection;
-        self.player = new Muzart.PlayerModel();
+        self.player = new Muzart.PlayerModel(self.tracks);
         self.pianoRoll = new Muzart.PianoRollModel(self.player);
 
         self.instruments = ['Piano', 'Instrument2', 'Instrument3'];
@@ -42,7 +42,7 @@
 
         self.playToggle = function () {
             if (self.player.isPlaying()) {
-                self.player.stop();
+                self.player.pause();
             }
             else {
                 if (self.loadedCanvas()) {
