@@ -14,16 +14,26 @@
             });
         });
 
-        self.deselectAll = function () {
-            $.each(selectables(), function (i, obj) {
-                obj.isSelected(false);
-            });
-            return false;
+        self.deselectAll = function (element) {
+            if (element && !element.type) {
+                element.isSelected(false);
+            }
+            else {
+                $.each(selectables(), function (i, obj) {
+                    obj.isSelected(false);
+                });
+                return false;
+            }
         };
-        self.selectAll = function () {
-            $.each(selectables(), function (i, obj) {
-                obj.isSelected(true);
-            });
+        self.selectAll = function (element) {
+            if (element && !element.type) {
+                element.isSelected(true);
+            }
+            else {
+                $.each(selectables(), function (i, obj) {
+                    obj.isSelected(true);
+                });
+            }
             return false;
         };
 
@@ -67,27 +77,46 @@
             });
         };
 
-        self.deleteSelection = function () {
-            $.each(self.selectedElements(), function (i, obj) {
-                selectables.remove(obj);
-            });
+        //if element is passed in, just perform the action on that. Otherwise, perform the action on the selection
+
+        self.deleteSelection = function (element) {
+            if (element && !element.type) {
+                selectables.remove(element);
+            }
+            else {
+                $.each(self.selectedElements(), function (i, obj) {
+                    selectables.remove(obj);
+                });
+            }
             return false;
         };
 
-        self.copySelection = function () {
+        self.copySelection = function (element) {
             self.copyBuffer = [];
-            $.each(self.selectedElements(), function (i, obj) {
-                self.copyBuffer.push(obj.clone());
-            });
+            if (element && !element.type) {
+                self.copyBuffer.push(element.clone());
+            }
+            else {
+                $.each(self.selectedElements(), function (i, obj) {
+                    self.copyBuffer.push(obj.clone());
+                });
+            }
             return false;
         };
 
-        self.cutSelection = function () {
+        self.cutSelection = function (element) {
+            
             self.copyBuffer = [];
-            $.each(self.selectedElements(), function (i, obj) {
-                self.copyBuffer.push(obj.clone());
-            });
-            self.deleteSelection();
+            if (element && !element.type) {
+                self.copyBuffer.push(element.clone());
+            }
+            else {
+                $.each(self.selectedElements(), function (i, obj) {
+                    self.copyBuffer.push(obj.clone());
+                });
+            }
+            self.deleteSelection(element);
+                
             return false;
         };
 
@@ -99,6 +128,13 @@
             });
             self.copySelection(); //refresh the copy buffer with newly cloned instances
             return false;
+        };
+
+        self.selectionExists = function () {
+            return self.selectedElements().length > 0;
+        };
+        self.canPaste = function () {
+            return self.copyBuffer.length > 0;
         };
     };
 })(jQuery, Muzart || (Muzart = {}));

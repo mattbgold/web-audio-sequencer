@@ -58,7 +58,6 @@ dp = false;
 		};
 
 		self.noteClicked = function (noteModel, e) {
-		    self.removeNote(noteModel, e);
 		    if (e.which === 1 && dp === false) {
 		        noteModel.play();
 		    }
@@ -82,12 +81,6 @@ dp = false;
 			else return '';
 			
 		});
-
-		self.removeNote = function($data, event) {
-			if(Muzart.inputs.mouseRight || (event.type === 'mousedown' && event.which ===3)) {
-				self.notes.remove($data);
-			}
-		};
 	};
 
 

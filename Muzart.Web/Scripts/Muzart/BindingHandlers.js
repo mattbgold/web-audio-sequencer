@@ -6,9 +6,21 @@
             var model = bindingContext.$parent; //$root
 
             $(element).on('mousedown', function (e) {
-                model.selection.affectSelection([elementModel]);
+                if (e.which === 1) {
+                    model.selection.affectSelection([elementModel]);
+                }
+                else if(e.ctrlKey && e.which === 3) {
+                    //delete
+                    model.selection.deleteSelection(elementModel);
+                }
+            }).on('mousemove', function (e) {
+                if (e.ctrlKey && e.which === 3) {
+                    //delete
+                    model.selection.deleteSelection(elementModel);
+                }
             });
 
+            
             //make the element draggable within the grid
             var topStart = 0;
             var leftStart = 0;
@@ -133,22 +145,24 @@
             
 
             $container.mousedown(function (e) {
-                var offset = $container.offset();
-                if (e.ctrlKey) {
-                    $(element).show();
-                    hidden = false;
-                    x1 = e.pageX - offset.left;
-                    y1 = e.pageY - offset.top;
-                    reCalc();
+                if (e.which === 1) {
+                    var offset = $container.offset();
+                    if (e.ctrlKey) {
+                        $(element).show();
+                        hidden = false;
+                        x1 = e.pageX - offset.left;
+                        y1 = e.pageY - offset.top;
+                        reCalc();
+                    }
                 }
             }).mousemove(function (e) {
-                var offset = $container.offset();
                 if (!hidden) {
+                    var offset = $container.offset();
                     x2 = e.pageX - offset.left;
                     y2 = e.pageY - offset.top;
                     reCalc();
                 }
-            }).mouseup(function (e) {
+            }).mouseup(function (e) { 
                 if (!hidden) {
                     var x3 = Math.min(x1, x2);
                     var x4 = Math.max(x1, x2);
@@ -218,9 +232,14 @@
     }
 
     ko.bindingHandlers.contextMenu = {
-        init: function (element, valueAccessor, allBindingsAccessor) {
-            var menuActions = ko.utils.unwrapObservable(valueAccessor());
+        init: function (element, valueAccessor, allBindingsAccessor, elementModel, bindingContext) {
+            var getMenuActions = valueAccessor();
             var menuId = 'menu-' + Math.random().toString(36);
+            var createFunc = function (action) {
+                return function () {
+                    action.handler(action.passElement ? bindingContext.$data : undefined);
+                };
+            };
             $(element).on('contextmenu', function (e) {
                 //ctrl-context-menu designated for different function
                 $('.dropdown-menu').remove();
@@ -239,9 +258,13 @@
                         $(this).remove();
                     });
 
+                var menuActions = getMenuActions(elementModel);
                 for (var i in menuActions) {
                     var action = menuActions[i];
-                    $menu.append($('<li></li>').append($('<a tabindex="-1" href="#"><i class="fa fa-fw ' + action.icon + '"></i> ' + action.text + '</a>').on('click', action.handler)));
+                    var canDoAction = (!action.enableWhen) || action.enableWhen()
+                    if(canDoAction)
+                        $menu.append($('<li class="'+(canDoAction ? '' : 'disabled')+'" data-toggle="tooltip" data-placement="right" title="'+(action.hotkeys.join(', '))+'"></li>').append($('<a tabindex="-1" href="#"><i class="fa fa-fw ' + action.icon + '"></i> ' + action.text + '</a>').on('click', createFunc(action))));
+                    $('[data-toggle="tooltip"]').tooltip();
                 }
 
                 return false;

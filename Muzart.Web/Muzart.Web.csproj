@@ -20,6 +20,7 @@
     <IISExpressAnonymousAuthentication />
     <IISExpressWindowsAuthentication />
     <IISExpressUseClassicPipelineMode />
+    <IsCompassProject>True</IsCompassProject>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -126,6 +127,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="App_Start\WebApiConfig.cs" />
     <Compile Include="Controllers\ComposeController.cs" />
+    <Compile Include="Controllers\MidiController.cs" />
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
@@ -138,16 +140,31 @@
     <Content Include="Content\bootstrap.min.css" />
     <Content Include="Content\font-awesome.css" />
     <Content Include="Content\font-awesome.min.css" />
-    <Content Include="Content\Muzart\Compose.css" />
     <Content Include="Content\Images\track1.png" />
     <Content Include="Content\Images\track2.png" />
     <Content Include="Content\Images\track3.png" />
     <Content Include="Content\Images\track4.png" />
     <Content Include="Content\Images\track5.png" />
-    <Content Include="Content\Muzart\Compose1.css">
-      <DependentUpon>Compose1.scss</DependentUpon>
-    </Content>
-    <Content Include="Content\Muzart\midi\overworld1.mid" />
+    <Content Include="Content\Muzart\Compose.css" />
+    <Content Include="Content\Muzart\midi\Disney_Themes_-_Can_You_Feel_The_Love_Tonight.mid" />
+    <Content Include="Content\Muzart\midi\Disney_Themes_-_Pirates_Of_The_Caribbean.mid" />
+    <Content Include="Content\Muzart\midi\Disney_Themes_-_Whole_New_World.mid" />
+    <Content Include="Content\Muzart\midi\Final Fantasy VII - Victory Fanfare.mid" />
+    <Content Include="Content\Muzart\midi\Final Fantasy VIII - FITHOS LUSEC WECOS VINOSEC.mid" />
+    <Content Include="Content\Muzart\midi\Final Fantasy VIII - Force Your Way.mid" />
+    <Content Include="Content\Muzart\midi\Fire Emblem - Together We Ride.mid" />
+    <Content Include="Content\Muzart\midi\Golden Sun - Battle Theme.mid" />
+    <Content Include="Content\Muzart\midi\Kirbys Dream Land - Castle Lololo.mid" />
+    <Content Include="Content\Muzart\midi\Kirbys Dream Land - Green Greens.mid" />
+    <Content Include="Content\Muzart\midi\Metroid Prime - Magmoor Caverns.mid" />
+    <Content Include="Content\Muzart\midi\Metroid Prime - Phendrana Drifts.mid" />
+    <Content Include="Content\Muzart\midi\Metroid Prime - Tallon Overworld 2.mid" />
+    <Content Include="Content\Muzart\midi\Metroid Prime - Title Theme.mid" />
+    <Content Include="Content\Muzart\midi\Pikmin - Ai No Uta Pikmin Theme.mid" />
+    <Content Include="Content\Muzart\midi\Pikmin - Forest of Hope.mid" />
+    <Content Include="Content\Muzart\midi\Pikmin - Night Comes.mid" />
+    <Content Include="Content\Muzart\midi\xi_-_FREEDOM_DiVE_full.mid" />
+    <Content Include="Content\Muzart\midi\zelda_overworld.mid" />
     <Content Include="Content\Muzart\PianoRoll.css" />
     <Content Include="Content\Muzart\soundfont\acoustic_grand_piano-ogg.js" />
     <Content Include="Content\perfect-scrollbar.css" />
@@ -204,13 +221,36 @@
     <Content Include="fonts\fontawesome-webfont.ttf" />
     <Content Include="fonts\fontawesome-webfont.eot" />
     <Content Include="fonts\FontAwesome.otf" />
-    <Content Include="Content\Muzart\Compose1.scss" />
-    <None Include="Properties\PublishProfiles\mattgold - FTP %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\mattgold - FTP %283%29.pubxml" />
+    <Content Include="config.rb" />
     <None Include="Properties\PublishProfiles\mattgold - FTP.pubxml" />
-    <None Include="Properties\PublishProfiles\mattgold - Web Deploy %282%29.pubxml" />
-    <None Include="Properties\PublishProfiles\mattgold - Web Deploy %283%29.pubxml" />
     <None Include="Properties\PublishProfiles\mattgold - Web Deploy.pubxml" />
+    <Content Include="sass\ie.scss">
+      <Compile>True</Compile>
+      <Minify>True</Minify>
+      <OutputFolder>F:\Dropbox\Muzart.Web\Muzart.Web\stylesheets</OutputFolder>
+      <IgnoreWarnings>True</IgnoreWarnings>
+      <IgnoreErrors>True</IgnoreErrors>
+      <CompileStyle>Nested</CompileStyle>
+      <DebugInfo>False</DebugInfo>
+    </Content>
+    <Content Include="sass\print.scss">
+      <Compile>True</Compile>
+      <Minify>True</Minify>
+      <OutputFolder>F:\Dropbox\Muzart.Web\Muzart.Web\stylesheets</OutputFolder>
+      <IgnoreWarnings>True</IgnoreWarnings>
+      <IgnoreErrors>True</IgnoreErrors>
+      <CompileStyle>Nested</CompileStyle>
+      <DebugInfo>False</DebugInfo>
+    </Content>
+    <Content Include="sass\screen.scss">
+      <Compile>True</Compile>
+      <Minify>True</Minify>
+      <OutputFolder>F:\Dropbox\Muzart.Web\Muzart.Web\stylesheets</OutputFolder>
+      <IgnoreWarnings>True</IgnoreWarnings>
+      <IgnoreErrors>True</IgnoreErrors>
+      <CompileStyle>Nested</CompileStyle>
+      <DebugInfo>False</DebugInfo>
+    </Content>
     <None Include="Scripts\jquery-2.1.3.intellisense.js" />
     <Content Include="Scripts\jquery-2.1.3.js" />
     <Content Include="Scripts\jquery-2.1.3.min.js" />
@@ -256,6 +296,9 @@
     <Content Include="Scripts\npm.js" />
     <Content Include="Scripts\perfect-scrollbar.jquery.js" />
     <Content Include="Scripts\_references.js" />
+    <Content Include="stylesheets\ie.css" />
+    <Content Include="stylesheets\print.css" />
+    <Content Include="stylesheets\screen.css" />
     <Content Include="Web.config">
       <SubType>Designer</SubType>
     </Content>

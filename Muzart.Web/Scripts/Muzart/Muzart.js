@@ -26,7 +26,6 @@ var Muzart;
     };
 
     //TODO: should we give each object its own "play" function? play a composition to play all tracks. play a track to solo, etc... chain of responsibility?
-    //TODO: should we introduce a separate Timer/Player object which is used by other objects to keep time, manage playhead, handle playing/stopping?
 
     Muzart.Track = function () {
         var self = this;
@@ -37,7 +36,10 @@ var Muzart;
         self.solo = ko.observable(false);
         self.volume = ko.observable(1);
 
-        //TODO: toggle binding extender that adds a observable.toggle
+        self.volume.subscribe(function (newVol) {
+            MIDI.setVolume(self.top, newVol * 255);
+        });
+
         self.soloToggle = function () {
             self.solo(!self.solo());
             if (self.solo()) {

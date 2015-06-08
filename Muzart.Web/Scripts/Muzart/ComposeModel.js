@@ -9,14 +9,6 @@
         self.tracks = ko.observableArray([new Muzart.Track()]);
         self.canvases = ko.observableArray([new Muzart.Canvas(0,0,32*4)]);
 
-        /*self.getAllNotes = function () {
-            return [].concat(
-                $.map(self.canvases(), function (c, i) {
-                    return c.notes;
-                })
-            );
-        };*/
-
         self.gridState = new Muzart.SnapZoomGridModel(.15625, 70, 4, 4);
         self.canvasSelection = new Muzart.SelectionModel(self.canvases);
         self.selection = self.canvasSelection;
@@ -27,6 +19,16 @@
 
         //state
         self.midiLoaded = ko.observable(false);
+        self.midiFiles = ko.observableArray([]);
+        self.selectedMidiFile = ko.observable();
+        self.getMidiFileId = function (fileName) {
+            for (var i = 0; i < self.midiFiles().length; i++) {
+                if (self.midiFiles()[i] === fileName) {
+                    return i;
+                }
+            }
+            return -1;
+        };
 
         self.snapLengthText = ko.pureComputed(function () {
             return '1/' + (32 * self.gridState.gridBaseWidth() / self.gridState.gridSnapWidth())
@@ -107,23 +109,61 @@
             
         };
 
-        self.selectAll = function () {
-            self.selection.selectAll();
+        //we can bind these functions allowing the selection reference in the inner function to vary after bind time
+        self.selectAll = function (element) {
+            self.selection.selectAll(element);
         };
-        self.deselectAll = function () {
-            self.selection.deselectAll();
+        self.deselectAll = function (element) {
+            self.selection.deselectAll(element);
         };
-        self.deleteSelection = function () {
-            self.selection.deleteSelection();
+        self.deleteSelection = function (element) {
+            self.selection.deleteSelection(element);
         };
-        self.copySelection = function () {
-            self.selection.copySelection();
+        self.copySelection = function (element) {
+            self.selection.copySelection(element);
         };
-        self.cutSelection = function () {
-            self.selection.cutSelection();
+        self.cutSelection = function (element) {
+            self.selection.cutSelection(element);
         };
         self.pasteSelection = function () {
             self.selection.pasteSelection();
+        };
+        self.selectionExists = function () {
+            return self.selection.selectionExists();
+        };
+        self.canPaste = function () {
+            return self.selection.canPaste();
+        };
+
+
+        self.selectedElementActions = [
+            { icon: 'fa-trash', text: 'Delete Selection', hotkeys: ['Delete, Backspace'], handler: self.deleteSelection, enableWhen: self.selectionExists },
+            { icon: 'fa-copy', text: 'Copy Selection', hotkeys: ['Ctrl+C'], handler: self.copySelection, enableWhen: self.selectionExists },
+            { icon: 'fa-cut', text: 'Cut Selection', hotkeys: ['Ctrl+X'], handler: self.cutSelection, enableWhen: self.selectionExists },
+            { icon: 'fa-paste', text: 'Paste', hotkeys: ['Ctrl+V'], handler: self.pasteSelection, enableWhen: self.canPaste }
+        ];
+
+        self.unselectedElementActions = [
+            { icon: 'fa-trash', text: 'Delete', hotkeys: ['Ctrl+RightClick'], passElement: true, handler: self.deleteSelection },
+            { icon: 'fa-copy', text: 'Copy', hotkeys: [], passElement: true, handler: self.copySelection },
+            { icon: 'fa-cut', text: 'Cut', hotkeys: [], passElement: true, handler: self.cutSelection },
+            { icon: 'fa-paste', text: 'Paste', hotkeys: ['Ctrl+V'], handler: self.pasteSelection, enableWhen: self.canPaste }
+        ];
+
+        self.gridSelectionActions = [
+            { icon: 'fa-plus-square', text: 'Select All', hotkeys: ['Ctrl+A'], handler: self.selectAll },
+            { icon: 'fa-minus-square', text: 'Deselect All', hotkeys: ['Ctrl+D'], handler: self.deselectAll }
+        ];
+        self.elementSelectionActions = [
+            { icon: 'fa-plus-square-o', text: 'Add to Selection', hotkeys: ['Ctrl+Shift+Click'], passElement: true, handler: self.selectAll },
+            { icon: 'fa-minus-square-o', text: 'Remove From Selection', hotkeys: ['Ctrl+Alt+Click'], passElement: true, handler: self.deselectAll }
+        ];
+
+        self.getElementActions = function ($data) {
+            return $data.isSelected() ? self.selectedElementActions.concat(self.elementSelectionActions) : self.unselectedElementActions.concat(self.elementSelectionActions);
+        };
+        self.getGridActions = function () {
+            return self.selectedElementActions.concat(self.gridSelectionActions);
         };
     };
 })(jQuery, Muzart || (Muzart = {}));

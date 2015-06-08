@@ -21,7 +21,7 @@
             return false;
         };
 
-        self.bpm = ko.observable(140);
+        self.bpm = ko.observable(120);
 
         self.bpmScale = ko.pureComputed(function () {
             var bps = (self.bpm() / 60); //quarter notes per second
@@ -40,9 +40,10 @@
         self.isPlaying = ko.observable(false);
         self.doLoop = ko.observable(false);
 
-        self.playNote = function (note) {
-            MIDI.noteOn(0, (108 - note.top), note.vel, 0);
-            MIDI.noteOff(0, (108 - note.top), note.len / self.bpmScale());
+        self.playNote = function (note, track) {
+            var channel = track ? track.top : 0;
+            MIDI.noteOn(channel, (108 - note.top), note.vel, 0);
+            MIDI.noteOff(channel, (108 - note.top), note.len / self.bpmScale());
         }
 
         self.play = function (canvasesToPlay, playImmediately) {
@@ -50,15 +51,17 @@
             //self.stop(); TODO: Just commented this out!!! we dont want to restart the playhead!
             self.startTime = new Date();
             updateInterval = setInterval(updatePlayTime, 20);
-            MIDI.setVolume(0, 127);
+            
 
             ko.utils.arrayForEach(ko.utils.unwrapObservable(canvasesToPlay), function (canvas) {
                 var track = getTrack(canvas);
+                //MIDI.setVolume(track.top, track.volume() * 255);
                 ko.utils.arrayForEach(canvas.notes, function (note) {
                     self.noteQueue.push(setTimeout(function () {
                         //TODO: offset note.on start time by the current self.playTime!
                         //test this, might be too slow.
                         if (!track.mute() && (track.solo() || !anySoloTracks())) {
+                            MIDI.setVolume(track.top, track.volume() * 255);
                             self.playNote(note);
                         }
                     }, ((note.on + (playImmediately ? 0 : canvas.on)) / self.bpmScale()) * 1000));
