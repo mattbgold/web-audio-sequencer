@@ -27,14 +27,14 @@ var Muzart;
 
     //TODO: should we give each object its own "play" function? play a composition to play all tracks. play a track to solo, etc... chain of responsibility?
 
-    Muzart.Track = function () {
+    Muzart.Track = function (sequenceNum) {
         var self = this;
 
         self.instrument = ko.observable();
-        self.sequenceNumber = 0;
+        self.sequenceNumber = sequenceNum;
         self.mute = ko.observable(false);
         self.solo = ko.observable(false);
-        self.volume = ko.observable(1);
+        self.volume = ko.observable(.75);
 
         self.volume.subscribe(function (newVol) {
             MIDI.setVolume(self.top, newVol * 255);
@@ -66,7 +66,6 @@ var Muzart;
 	    self.len = len || 4; 
         self.prevTop = null;
 
-        //open piano roll from canvas
         self.clone = function () {
             var clone = new Muzart.Canvas(self.top, self.on, self.len);
             clone.prevTop = self.prevTop;
@@ -103,6 +102,9 @@ var Muzart;
             var cls = ""
             if (self.noteText().length === 2) {
                 cls += 'key-white ';
+                if (num % 12 === 0) {
+                    cls += 'key-c '
+                }
                 if(num ===0) {
                     cls+='key-white-tippytop';
                 }
@@ -135,7 +137,8 @@ var Muzart;
 		        MIDI.noteOff(0, (108 - self.num), .1);
 		    }
 		    catch (err) { }
-		}
+		};
+		self.isPlaying = false;
 	};
 
 	Muzart.Note = function(top, on, len, vel) {

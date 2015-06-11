@@ -39,7 +39,7 @@
         };
 
         self.addTrack = function () {
-            self.tracks.push(new Muzart.Track());
+            self.tracks.push(new Muzart.Track(self.tracks().length));
         };
 
         self.playToggle = function () {
@@ -66,7 +66,7 @@
             var trackClickX = event.clientX - offset.left;
             var trackXSnap = (Math.floor(trackClickX / self.gridState.gridSnapWidth()) * self.gridState.gridSnapWidth()) / self.gridState.gridBaseWidth();
 
-            var newCanvas = new Muzart.Canvas(data.num, trackXSnap, self.gridState.gridResolution()*4);
+            var newCanvas = new Muzart.Canvas(data.sequenceNumber, trackXSnap, self.gridState.gridResolution()*4);
             //newNote.play();
 
             self.canvases.push(newCanvas);

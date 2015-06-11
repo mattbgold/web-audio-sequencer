@@ -61,7 +61,13 @@
                         //TODO: offset note.on start time by the current self.playTime!
                         //test this, might be too slow.
                         if (!track.mute() && (track.solo() || !anySoloTracks())) {
-                            MIDI.setVolume(track.top, track.volume() * 255);
+                            //MIDI.setVolume(track.top, track.volume() * 255);
+
+                            // TODO: we need some kind of global array of note play state, instead of relying on the note length.
+                            //track.isPlaying = true;
+                            //setTimeout(function() {
+// TODO: when the note turns off, set trackPlaying to false only if no other notes are playing
+                            //}, 100);
                             self.playNote(note);
                         }
                     }, ((note.on + (playImmediately ? 0 : canvas.on)) / self.bpmScale()) * 1000));

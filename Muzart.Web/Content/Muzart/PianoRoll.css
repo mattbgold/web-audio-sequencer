@@ -116,7 +116,7 @@
     font-size: smaller;
     border-radius: 3px;
 }
-.key-black {
+.key.key-black {
     background-color:rgb(20,20,20);
     height:20px;
     width:85%;
@@ -126,21 +126,21 @@
     margin-bottom:-20px;
     color:white;
 }
-.key-white {
+.key.key-white {
     background-color:White;
     color: black;
 }
-.key-white.key-white-sandwiched {
+.key.key-white.key-white-sandwiched {
     height:40px;
     padding-top:10px;
 }
-.key-white.key-white-blackontop {
+.key.key-white.key-white-blackontop {
     padding-top:10px;
 }
-.key-white.key-white-blackonbottom {
+.key.key-white.key-white-blackonbottom {
     padding-top: 0px;
 }
-.key-white.key-white-tippytop {
+.key.key-white.key-white-tippytop {
     padding-top: 0px;
     height:20px;
 }
@@ -151,4 +151,18 @@
 .key:hover {
     border-color: #AAA;
     cursor: pointer;
+}
+
+.track > .key-white {
+    background-color: white;
+    opacity: 0.2;
+    width:100%;
+    height:100%;
+}
+.track > .key-c {
+    opacity: 0.35;
+}
+
+.track > key-is-active {
+    background-color: Yellow;
 }

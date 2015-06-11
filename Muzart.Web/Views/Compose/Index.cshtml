@@ -211,12 +211,19 @@
                         //add a track if this channel/track has notes in it.
                         if (trackNotes) {
                             viewModel.addTrack();
-                            var canvasOffset = trackNotes[0].on;
+                            //the note "on" are absolute, we need to make them relative to the canvas
+                            var firstNoteOn = trackNotes[0].on;
+                            //the start of the canvas needs to be at the beginning of a measure, so that the grid snap will be valid
+                            var canvasStart = Math.floor(firstNoteOn / (4 * viewModel.pianoRoll.baseNotesToMakeQuarterNote)) * (4 * viewModel.pianoRoll.baseNotesToMakeQuarterNote);
+                            var noteOffset = firstNoteOn - canvasStart;
                             for (var n in trackNotes) {
-                                trackNotes[n].on -= canvasOffset;
+                                trackNotes[n].on += noteOffset - firstNoteOn; //make the notes relative to the canvas
                             }
                             var lastNote = trackNotes[trackNotes.length - 1];
-                            var canvas = new Muzart.Canvas(viewModel.tracks().length-1, canvasOffset, Math.ceil(lastNote.on + lastNote.len));
+                            var canvas = new Muzart.Canvas(
+                                viewModel.tracks().length - 1,
+                                canvasStart,
+                                Math.ceil(lastNote.on + lastNote.len));
                             canvas.notes = trackNotes;
                             canvas.notesToDraw(trackNotes);
                             viewModel.canvases.push(canvas);

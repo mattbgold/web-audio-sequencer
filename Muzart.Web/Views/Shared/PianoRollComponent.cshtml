@@ -15,7 +15,9 @@
     <div class="roll" oncontextmenu="return false;" data-bind="css: actionCursor, style: {width: (measuresInRoll()*gridState.gridBaseWidth()*4*baseNotesToMakeQuarterNote) + 'px'}, contextMenu: $root.getGridActions">
 	    <div class="cursor" data-bind="style: { left: (($root.player.playTime()/60)*$root.player.bpm()*baseNotesToMakeQuarterNote)*gridState.gridBaseWidth() + 'px' }"></div>
         <!-- ko foreach: tracks -->
-	    <div class="track" data-bind="event: { mousedown: $parent.trackClicked }, css: $parent.trackZoomClass"></div>
+	    <div class="track" data-bind="event: { mousedown: $parent.trackClicked }, css: $parent.trackZoomClass">
+            <div data-bind="css: noteClass()"></div>
+	    </div>
 	    <!-- /ko -->
 	    <!-- ko foreach: notes -->
 	    <div class="note" data-bind="selectGridElement: $parent.gridState.gridSnapWidth, onDrag: play, event: { mousedown: $parent.noteClicked }, css: { 'is-selected': isSelected }, contextMenu: $root.getElementActions"></div>
