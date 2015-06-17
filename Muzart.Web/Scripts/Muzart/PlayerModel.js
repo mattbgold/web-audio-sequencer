@@ -3,10 +3,12 @@
 (function ($, Muzart) {
     'use strict';
 
-    Muzart.PlayerModel = function (tracks) {
+    Muzart.PlayerModel = function (tracks, pianoRoll) {
         var self = this;
 
         var _tracks = tracks;
+        var _pianoRoll = pianoRoll;
+
         var getTrack = function (canvas) {
             return _tracks()[canvas.top];
         };
@@ -28,64 +30,51 @@
             return bps * 8; // base notes per second
         });
 
-        var startTime = new Date();
-        self.playTime = ko.observable(0.0);
-        var updateInterval;
-        var updatePlayTime = function () {
-            self.playTime((new Date() - self.startTime) / 1000);
+        self.t = ko.observable(0); //the location of the playhead
 
+        var timers = {
+            nextEvent: null
         };
+
         self.noteQueue = [];
 
         self.isPlaying = ko.observable(false);
         self.doLoop = ko.observable(false);
 
+        var _notesPlaying = {};
         self.playNote = function (note, track) {
-            var channel = track ? track.top : 0;
+            //var channel = track ? track.sequenceNumber : 0;
+            //lets stick to channel 0. Midi.js sets each channel instrument to a different number by default, and we only loaded instrument 0
+            var channel = 0;
             MIDI.noteOn(channel, (108 - note.top), note.vel, 0);
             MIDI.noteOff(channel, (108 - note.top), note.len / self.bpmScale());
+
+            _pianoRoll.tracks[note.top].isPlaying(true);
+            
+            clearTimeout(_notesPlaying[note.top]);
+            _notesPlaying[note.top] = setTimeout(function () {
+                _pianoRoll.tracks[note.top].isPlaying(false);
+            }, note.len / self.bpmScale()*1000);
         }
 
-        self.play = function (canvasesToPlay, playImmediately) {
-            //21 = A0, 108 = Gb7
-            //self.stop(); TODO: Just commented this out!!! we dont want to restart the playhead!
-            self.startTime = new Date();
-            updateInterval = setInterval(updatePlayTime, 20);
-            
-
-            ko.utils.arrayForEach(ko.utils.unwrapObservable(canvasesToPlay), function (canvas) {
-                var track = getTrack(canvas);
-                //MIDI.setVolume(track.top, track.volume() * 255);
-                ko.utils.arrayForEach(canvas.notes, function (note) {
-                    self.noteQueue.push(setTimeout(function () {
-                        //TODO: offset note.on start time by the current self.playTime!
-                        //test this, might be too slow.
-                        if (!track.mute() && (track.solo() || !anySoloTracks())) {
-                            //MIDI.setVolume(track.top, track.volume() * 255);
-
-                            // TODO: we need some kind of global array of note play state, instead of relying on the note length.
-                            //track.isPlaying = true;
-                            //setTimeout(function() {
-// TODO: when the note turns off, set trackPlaying to false only if no other notes are playing
-                            //}, 100);
-                            self.playNote(note);
-                        }
-                    }, ((note.on + (playImmediately ? 0 : canvas.on)) / self.bpmScale()) * 1000));
-                });
-            });
+        self.play = function (canvasesToPlay, inPianoRoll) {
             self.isPlaying(true);
+
+            advanceSong(ko.utils.unwrapObservable(canvasesToPlay), inPianoRoll);
         };
 
         self.stop = function (doPause) {
-            clearInterval(updateInterval);
+            clearInterval(timers.nextEvent);
+
             MIDI.stopAllNotes();
+
             $.each(self.noteQueue, function (i, val) {
                 clearTimeout(val);
             });
             self.noteQueue = [];
             self.isPlaying(false);
             if (doPause !== true) {
-                self.playTime(0.0);
+                self.t(0);
             }
         };
 
@@ -96,5 +85,44 @@
         self.loopToggle = function () {
             self.doLoop(!self.doLoop());
         }
+
+        var advanceSong = function (canvases, inPianoRoll) {
+            var tEnd = 0;
+            ko.utils.arrayForEach(canvases, function (canvas) {
+                if (canvas.on + canvas.len > tEnd)
+                    tEnd = canvas.on + canvas.len;
+
+                ko.utils.arrayForEach(canvas.notes, function (note) {
+                    if (!getTrack(canvas).mute() && (getTrack(canvas).solo() || !anySoloTracks())) {
+                        if (note.on === self.t()) {
+                            self.playNote(note, getTrack(canvas));
+                        }
+                        else if (note.on + (inPianoRoll ? 0 : canvas.on) > self.t() && note.on + (inPianoRoll ? 0 : canvas.on) < (self.t() + 1)) {
+                            setTimeout(function () {
+                                self.playNote(note, getTrack(canvas));
+                            }, (((note.on + (inPianoRoll ? 0 : canvas.on)) - self.t()) / self.bpmScale()) * 1000);
+                        }
+                    }
+                });
+                
+            });
+
+            if (self.t() >= tEnd) {
+                if (self.doLoop()) {
+                    self.t(0);
+                    advanceSong(canvases, inPianoRoll);
+                }
+                else {
+                    self.stop();
+                    return;
+                }
+            }
+            else {
+                timers.nextEvent = setTimeout(function () {
+                    self.t(self.t() + 1);
+                    advanceSong(canvases, inPianoRoll);
+                }, 1 / self.bpmScale() * 1000);
+            }
+        };
     };
 })(jQuery, Muzart || (Muzart = {}));

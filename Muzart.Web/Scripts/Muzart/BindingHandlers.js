@@ -5,6 +5,8 @@
         init: function (element, valueAccessor, allBindings, elementModel, bindingContext) {
             var model = bindingContext.$parent; //$root
 
+            elementModel.element = element;
+
             $(element).on('mousedown', function (e) {
                 if (e.which === 1) {
                     model.selection.affectSelection([elementModel]);
@@ -101,7 +103,7 @@
                 },
                 stop: function (e, ui) {
                     var deltaW = (ui.size.width - elementModel.len * model.gridState.gridBaseWidth());
-                    var fixedLength = Math.round(ui.size.width / model.gridState.gridBaseWidth());
+                    var fixedLength = (ui.size.width + 2) / model.gridState.gridBaseWidth(); // this relied on the actual px difference being small enough for round to fix. Math.round(ui.size.width / model.gridState.gridBaseWidth());
                     elementModel.len = fixedLength;
                     $(ui.helper).css('width', fixedLength * model.gridState.gridBaseWidth() + 'px'); //hack to fix bug in jqueryUI resizable
                     if (elementModel.isSelected()) {
@@ -124,6 +126,30 @@
             $(element).css('width', elementModel.len * model.gridState.gridBaseWidth() + 'px').css('left', elementModel.on * model.gridState.gridBaseWidth() + 'px').css('top', elementModel.top * model.gridState.rowHeight() + 'px');
         }
     };
+
+    ko.bindingHandlers.selectGridSortable = {
+        init: function (element, valueAccessor, allBindings) {
+            // TODO: make the tracks sortable. on sortable update, reorder the canvases
+            $(element).sortable({
+                update: function (event, ui) {
+                    //retrieve our actual data item
+                    var item = ui.item.tmplItem().data;
+                    //figure out its new position
+                    var position = ko.utils.arrayIndexOf(ui.item.parent().children(), ui.item[0]);
+                    //remove the item and add it back in the right spot
+                    if (position >= 0) {
+                        list.remove(item);
+                        list.splice(position, 0, item);
+                    }
+                }
+            });
+        },
+        update: function (element, valueAccessor, allBindings) {
+            //TODO: this will pick up on deletions, needs to ignore the update caused by sortable
+            // on deletion reorder canvases as necessary. 
+            // take this code from ComposeModel.removeTrack
+        }
+    }
 
     ko.bindingHandlers.boxSelect = {
         init: function (element, valueAccessor, allBindings) {

@@ -6,14 +6,15 @@
     Muzart.ComposeModel = function () {
         var self = this;
         
-        self.tracks = ko.observableArray([new Muzart.Track()]);
+        self.tracks = ko.observableArray([new Muzart.Track(0)]);
         self.canvases = ko.observableArray([new Muzart.Canvas(0,0,32*4)]);
-
-        self.gridState = new Muzart.SnapZoomGridModel(.15625, 70, 4, 4);
+        self.trackHeight = 70;
+        self.gridState = new Muzart.SnapZoomGridModel(.15625, self.trackHeight, 4, 4);
         self.canvasSelection = new Muzart.SelectionModel(self.canvases);
         self.selection = self.canvasSelection;
-        self.player = new Muzart.PlayerModel(self.tracks);
-        self.pianoRoll = new Muzart.PianoRollModel(self.player);
+        self.pianoRoll = new Muzart.PianoRollModel();
+        self.player = new Muzart.PlayerModel(self.tracks, self.pianoRoll);
+        
 
         self.instruments = ['Piano', 'Instrument2', 'Instrument3'];
 
@@ -33,9 +34,31 @@
         self.snapLengthText = ko.pureComputed(function () {
             return '1/' + (32 * self.gridState.gridBaseWidth() / self.gridState.gridSnapWidth())
         });
+
         //functions
+        self.getCanvasesInTrack = function (track) {
+            return $.grep(self.canvases(), function (c, i) {
+                return c.top === track.sequenceNumber;
+            });
+        };
+
         self.removeTrack = function (track) {
+            var canvases = self.getCanvasesInTrack(track);
+            $.each(canvases, function (i, can) {
+                self.canvases.remove(can);
+            });
+            
+            var num = track.sequenceNumber;
             self.tracks.remove(track);
+            for (var i = num; i < self.tracks().length; i++) {
+                var canvases = self.getCanvasesInTrack(self.tracks()[i]);
+                $.each(canvases, function (i, can) {
+                    can.top -= 1;
+                    $(can.element).css('top', '-=' + self.trackHeight + 'px');
+                });
+
+                self.tracks()[i].sequenceNumber--;
+            }
         };
 
         self.addTrack = function () {

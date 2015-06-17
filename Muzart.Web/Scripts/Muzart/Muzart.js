@@ -30,7 +30,7 @@ var Muzart;
     Muzart.Track = function (sequenceNum) {
         var self = this;
 
-        self.instrument = ko.observable();
+        self.instrument = ko.observable(); //todo: does this need observable?
         self.sequenceNumber = sequenceNum;
         self.mute = ko.observable(false);
         self.solo = ko.observable(false);
@@ -94,43 +94,49 @@ var Muzart;
 		self.noteText = function (num) {
 		    return MIDI.noteToKey[108 - (num || self.num)];
 		};
-		self.noteClass = function () {
+		self.isPlaying = ko.observable(false);
+
+		var _noteClasses = (function () {
 		    //0 = C white
 		    //1- B
 		    //2 = A#
 		    //3 = A
-            var cls = ""
-            if (self.noteText().length === 2) {
-                cls += 'key-white ';
-                if (num % 12 === 0) {
-                    cls += 'key-c '
-                }
-                if(num ===0) {
-                    cls+='key-white-tippytop';
-                }
-                else if (num === 87) {
-                    cls+='key-white-blackontop';
-                }
-                else {
-                    var blackonbottom = self.noteText(self.num + 1).length > 2;
-                    var blackontop = self.noteText(self.num - 1).length > 2;
-                    if (blackontop && blackonbottom) {
-                        cls += 'key-white-sandwiched';
-                    }
-                    else if (blackontop) {
-                        cls += 'key-white-blackontop';
-                    }
-                    else {
-                        cls += 'key-white-blackonbottom';
-                    }
-                }
-            }
-            else {
-                cls += 'key-black';
-            }
+		    var cls = ""
+		    if (self.noteText().length === 2) {
+		        cls += 'key-white ';
+		        if (num % 12 === 0) {
+		            cls += 'key-c '
+		        }
+		        if (num === 0) {
+		            cls += 'key-white-tippytop';
+		        }
+		        else if (num === 87) {
+		            cls += 'key-white-blackontop';
+		        }
+		        else {
+		            var blackonbottom = self.noteText(self.num + 1).length > 2;
+		            var blackontop = self.noteText(self.num - 1).length > 2;
+		            if (blackontop && blackonbottom) {
+		                cls += 'key-white-sandwiched';
+		            }
+		            else if (blackontop) {
+		                cls += 'key-white-blackontop';
+		            }
+		            else {
+		                cls += 'key-white-blackonbottom';
+		            }
+		        }
+		    }
+		    else {
+		        cls += 'key-black';
+		    }
+		    return cls;
+		})();
 
-            return cls;
-		};
+		self.noteClass = ko.pureComputed(function(){
+		    return _noteClasses + (self.isPlaying() ? ' key-is-active' : '');
+		});
+
 		self.play = function () {
 		    try {
 		        MIDI.noteOn(0, (108 - self.num), 127, 0);
@@ -138,7 +144,7 @@ var Muzart;
 		    }
 		    catch (err) { }
 		};
-		self.isPlaying = false;
+		
 	};
 
 	Muzart.Note = function(top, on, len, vel) {
