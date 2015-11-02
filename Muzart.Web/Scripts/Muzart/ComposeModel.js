@@ -1,20 +1,20 @@
 ﻿var Muzart;
 
-(function($, Muzart){
+(function ($, Muzart) {
     'use strict';
 
     Muzart.ComposeModel = function () {
         var self = this;
-        
+
         self.tracks = ko.observableArray([new Muzart.Track(0)]);
-        self.canvases = ko.observableArray([new Muzart.Canvas(0,0,32*4)]);
+        self.canvases = ko.observableArray([new Muzart.Canvas(0, 0, 32 * 4)]);
         self.trackHeight = 70;
         self.gridState = new Muzart.SnapZoomGridModel(.15625, self.trackHeight, 4, 4);
         self.canvasSelection = new Muzart.SelectionModel(self.canvases);
         self.selection = self.canvasSelection;
         self.pianoRoll = new Muzart.PianoRollModel();
         self.player = new Muzart.PlayerModel(self.tracks, self.pianoRoll);
-        
+
 
         self.instruments = ['Piano', 'Instrument2', 'Instrument3'];
 
@@ -47,7 +47,7 @@
             $.each(canvases, function (i, can) {
                 self.canvases.remove(can);
             });
-            
+
             var num = track.sequenceNumber;
             self.tracks.remove(track);
             for (var i = num; i < self.tracks().length; i++) {
@@ -89,7 +89,7 @@
             var trackClickX = event.clientX - offset.left;
             var trackXSnap = (Math.floor(trackClickX / self.gridState.gridSnapWidth()) * self.gridState.gridSnapWidth()) / self.gridState.gridBaseWidth();
 
-            var newCanvas = new Muzart.Canvas(data.sequenceNumber, trackXSnap, self.gridState.gridResolution()*4);
+            var newCanvas = new Muzart.Canvas(data.sequenceNumber, trackXSnap, self.gridState.gridResolution() * 4);
             //newNote.play();
 
             self.canvases.push(newCanvas);
@@ -118,18 +118,20 @@
                 self.selection = self.pianoRoll.selection;
                 self.showPianoRoll(true);
                 self.loadedCanvas().notesToDraw(null);
+                self.player.stop();
             }
             else {
                 self.selection.deselectAll();
                 self.selection = self.canvasSelection;
                 self.showPianoRoll(false);
+                self.player.stop();
             }
         });
 
         self.saveRoll = function () {
             self.loadedCanvas().notesToDraw(self.loadedCanvas().notes);
             self.loadedCanvas(null);
-            
+
         };
 
         //we can bind these functions allowing the selection reference in the inner function to vary after bind time

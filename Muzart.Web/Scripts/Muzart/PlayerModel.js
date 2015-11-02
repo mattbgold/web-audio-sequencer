@@ -32,11 +32,9 @@
 
         self.t = ko.observable(0); //the location of the playhead
 
-        var timers = {
+        var _timers = {
             nextEvent: null
         };
-
-        self.noteQueue = [];
 
         self.isPlaying = ko.observable(false);
         self.doLoop = ko.observable(false);
@@ -50,11 +48,11 @@
             MIDI.noteOff(channel, (108 - note.top), note.len / self.bpmScale());
 
             _pianoRoll.tracks[note.top].isPlaying(true);
-            
+
             clearTimeout(_notesPlaying[note.top]);
             _notesPlaying[note.top] = setTimeout(function () {
                 _pianoRoll.tracks[note.top].isPlaying(false);
-            }, note.len / self.bpmScale()*1000);
+            }, note.len / self.bpmScale() * 1000);
         }
 
         self.play = function (canvasesToPlay, inPianoRoll) {
@@ -64,14 +62,9 @@
         };
 
         self.stop = function (doPause) {
-            clearInterval(timers.nextEvent);
-
+            clearInterval(_timers.nextEvent);
             MIDI.stopAllNotes();
 
-            $.each(self.noteQueue, function (i, val) {
-                clearTimeout(val);
-            });
-            self.noteQueue = [];
             self.isPlaying(false);
             if (doPause !== true) {
                 self.t(0);
@@ -89,24 +82,29 @@
         var advanceSong = function (canvases, inPianoRoll) {
             var tEnd = 0;
             ko.utils.arrayForEach(canvases, function (canvas) {
-                if (canvas.on + canvas.len > tEnd)
-                    tEnd = canvas.on + canvas.len;
-
-                ko.utils.arrayForEach(canvas.notes, function (note) {
-                    if (!getTrack(canvas).mute() && (getTrack(canvas).solo() || !anySoloTracks())) {
-                        if (note.on === self.t()) {
-                            self.playNote(note, getTrack(canvas));
-                        }
-                        else if (note.on + (inPianoRoll ? 0 : canvas.on) > self.t() && note.on + (inPianoRoll ? 0 : canvas.on) < (self.t() + 1)) {
-                            setTimeout(function () {
+                if ((inPianoRoll ? 0 : canvas.on) + canvas.len > tEnd)
+                    tEnd = (inPianoRoll ? 0 : canvas.on) + canvas.len;
+                //dont process notes in canvases that are out-of-range
+                if (inPianoRoll || (canvas.on + canvas.len > self.t() && canvas.on <= self.t())) {
+                    ko.utils.arrayForEach(canvas.notes, function (note) {
+                        var noteT = note.on + (inPianoRoll ? 0 : canvas.on);
+                        if (noteT === self.t()) {
+                            if (!getTrack(canvas).mute() && (getTrack(canvas).solo() || !anySoloTracks())) {
                                 self.playNote(note, getTrack(canvas));
-                            }, (((note.on + (inPianoRoll ? 0 : canvas.on)) - self.t()) / self.bpmScale()) * 1000);
+                            }
                         }
-                    }
-                });
-                
+                        else if (noteT > self.t() && noteT < self.t() + 1) {
+                            if (!getTrack(canvas).mute() && (getTrack(canvas).solo() || !anySoloTracks())) {
+                                setTimeout(function () {
+                                    self.playNote(note, getTrack(canvas));
+                                }, (((note.on + (inPianoRoll ? 0 : canvas.on)) - self.t()) / self.bpmScale()) * 1000);
+                            }
+                        }
+                    });
+                }
             });
 
+            //determine if we are at the end of the song and loop if necessary
             if (self.t() >= tEnd) {
                 if (self.doLoop()) {
                     self.t(0);
@@ -118,7 +116,8 @@
                 }
             }
             else {
-                timers.nextEvent = setTimeout(function () {
+                //call this function   again on the next beat
+                _timers.nextEvent = setTimeout(function () {
                     self.t(self.t() + 1);
                     advanceSong(canvases, inPianoRoll);
                 }, 1 / self.bpmScale() * 1000);

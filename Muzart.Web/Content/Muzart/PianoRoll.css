@@ -33,8 +33,12 @@
     width:1px;
     height:100%;
     top:0px;
-    background-color: yellow;
+    background-color: Yellow;
     position:absolute;
+    z-index:100;
+}
+.canvasgrid .cursor {
+background-color: rgb(115, 152, 115);
 }
 .track-1 {
 	background-image: url('../Images/track1.png')
@@ -163,6 +167,9 @@
     opacity: 0.35;
 }
 
-.track > key-is-active {
+.track > .key-is-active {
     background-color: Yellow;
+    opacity: 0.2;
+    width:100%;
+    height:100%;
 }

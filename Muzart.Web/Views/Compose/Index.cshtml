@@ -15,8 +15,8 @@
         <div class="btn-group player-buttons" role="group" aria-label="...">
             <button type="button" class="btn btn-lg btn-default btn-play" data-bind="click: playToggle"><i class="fa" data-bind="css: { 'fa-play': !player.isPlaying(), 'fa-pause': player.isPlaying() }"></i></button>
             <button type="button" class="btn btn-lg btn-default" data-bind="click: player.stop"><i class="fa fa-fw fa-stop"></i></button>
-            <button type="button" class="btn btn-lg btn-default" data-bind="click: player.loopToggle, css: {active: player.doLoop}"><i class="fa fa-fw fa-repeat"></i></button>  
-        </div>  
+            <button type="button" class="btn btn-lg btn-default" data-bind="click: player.loopToggle, css: {active: player.doLoop}"><i class="fa fa-fw fa-repeat"></i></button>
+        </div>
         <!-- TODO: Clean up the timer -->
         <span class="timer" data-bind="text: Math.ceil(player.t() / pianoRoll.baseNotesToMakeQuarterNote / 4)"></span>
         <span class="timer">:</span>
@@ -26,12 +26,12 @@
             <button class="btn btn-default" data-bind="click: function(){loadMidiFile($root.getMidiFileId($root.selectedMidiFile()));}">Load Midi</button>
         </div>
     </div>
-        
+
 </div>
 <div class="row roll-header" data-bind="visible: showPianoRoll">
     <div class="col-xs-12">
         <button class="btn btn-success" data-bind="click:saveRoll"><i class="fa fa-check"></i> Done Editing</button>
-        Grid Snap: 
+        Grid Snap:
         <select class="form-control form-reset" data-bind="options: pianoRoll.snapWidths, value: pianoRoll.gridState.snapMode, optionsText: 'text', optionsValue: 'value'"></select>
     </div>
 </div>
@@ -39,48 +39,49 @@
 <!--Snap Width: <span data-bind="text:snapLengthText"></span>
     <input class="" type="range" min="3" max="5" data-bind="value: gridState.snapMode" /> -->
 
-    
+
 <div id="composition">
-    <div  class="row tracks-container">
+    <div class="row tracks-container">
         <div class="col-xs-2 col-reset">
             <div class="tracks-header">
-                <input class="zoomrange" type="range" min="1" max="6" step="any" data-bind="value: gridState.zoomLevel, valueUpdate: 'input'" />
+                <input class="zoomrange" type="range" min="1" max="6" step="0.5" data-bind="value: gridState.zoomLevel, valueUpdate: 'input'" />
             </div>
             <section data-bind="foreach: tracks, selectGridSortable: tracks">
-	            <div class="instrument">
-                    <button class="btn btn-link" data-bind="click: $parent.removeTrack, disable: $parent.tracks().length === 1" ><i class="fa fa-remove"></i></button>
+                <div class="instrument">
+                    <button class="btn btn-link" data-bind="click: $parent.removeTrack, disable: $parent.tracks().length === 1"><i class="fa fa-remove"></i></button>
                     <div class="btn-group" role="group" aria-label="...">
                         <button type="button" class="btn btn-xs btn-default" data-bind="click: soloToggle, css: {active: solo}"><i class="fa fa-fw fa-headphones"></i></button>
                         <button type="button" class="btn btn-xs btn-default" data-bind="click: muteToggle, css: {active: mute}"><i class="fa fa-fw fa-volume-off"></i></button>
                     </div>
                     <span class="pull-right" style="margin:5px;">
                         <i class="fa fa-fw fa-volume-down"></i>
-                        <input type="range" class="form-reset" style="vertical-align:middle;" min="0" max="1" step="any" data-bind="value:volume, valueUpdate: 'input'"/>
+                        <input type="range" class="form-reset" style="vertical-align:middle;" min="0" max="1" step="any" data-bind="value:volume, valueUpdate: 'input'" />
                         <i class="fa fa-fw fa-volume-up"></i>
                     </span>
                     <select class="form-control" data-bind="options: $root.instruments, value: instrument"></select>
-	            </div>
+                </div>
             </section>
         </div>
         <div class="col-xs-10 col-reset">
             <div class="tracks-header"></div>
             <div class="canvasgrid" oncontextmenu="return false;">
+                <div class="cursor" data-bind="style: { left: player.t()*gridState.gridBaseWidth() + 'px' }"></div>
                 <!-- ko foreach: tracks -->
-	            <div class="shelf" data-bind="event: { mousedown: $root.trackClicked }, contextMenu: $root.getGridActions"></div>
+                <div class="shelf" data-bind="event: { mousedown: $root.trackClicked }, contextMenu: $root.getGridActions"></div>
                 <!-- /ko -->
                 <!-- ko foreach: canvases -->
                 <div class="canvas" data-bind="selectGridElement: $root.gridState.gridSnapWidth, css: { 'is-selected': isSelected }, dblClick: $root.loadedCanvas, contextMenu: $root.getElementActions">
                     <button class="btn btn-sm btn-link btn-canvas-edit" data-bind="click: $root.loadedCanvas"><i class="fa fa-pencil"></i></button>
                     <svg height="100%" width="100%">
                         <!-- ko foreach: notesToDraw -->
-                        <line style="stroke:rgb(150,150,150);stroke-width:2" data-bind="attr: { x1: ($data.on*$root.gridState.gridBaseWidth())+'px', x2: (($data.on+$data.len)*$root.gridState.gridBaseWidth())+'px', y1:($data.top/108)*100 + '%',y2:($data.top/108)*100 + '%'  }" /> 
+                        <line style="stroke:rgb(150,150,150);stroke-width:2" data-bind="attr: { x1: ($data.on*$root.gridState.gridBaseWidth())+'px', x2: (($data.on+$data.len)*$root.gridState.gridBaseWidth())+'px', y1:($data.top/108)*100 + '%',y2:($data.top/108)*100 + '%'  }" />
                         <!-- /ko -->
                     </svg>
                 </div>
                 <!-- /ko -->
                 <div class="box-select" data-bind="boxSelect: selection.onBoxSelect"></div>
             </div>
-        </div>   
+        </div>
     </div>
     <button class="btn btn-default" data-bind="click: addTrack"><i class="fa fa-plus"></i> Add Track</button>
 </div>
@@ -91,7 +92,7 @@
 @section Scripts {
     @Scripts.Render("~/bundles/midi")
     @Scripts.Render("~/bundles/muzartcompose")
-<script>
+    <script>
     //TODO: move all piano roll stuff into Piano roll component
     $(function () {
         $.ajax({
@@ -173,7 +174,7 @@
                             if (event.subtype === 'setTempo') {
                                // var bpm = Math.round(60000000 / event.microsecondsPerBeat);
                                 //TODO: figure out bpm once we can automate it. Be careful becayse bpm determines note length below
-                                
+
                                 //viewModel.player.bpm(bpm);
                                 //if(!initialTempoSet)
                                 //initialTempoSet = bpm;
@@ -242,5 +243,5 @@
     var viewModel = new Muzart.ComposeModel();
 
     ko.applyBindings(viewModel);
-</script>
+    </script>
 }

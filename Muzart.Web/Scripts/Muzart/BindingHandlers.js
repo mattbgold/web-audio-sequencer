@@ -11,7 +11,7 @@
                 if (e.which === 1) {
                     model.selection.affectSelection([elementModel]);
                 }
-                else if(e.ctrlKey && e.which === 3) {
+                else if (e.ctrlKey && e.which === 3) {
                     //delete
                     model.selection.deleteSelection(elementModel);
                 }
@@ -22,7 +22,7 @@
                 }
             });
 
-            
+
             //make the element draggable within the grid
             var topStart = 0;
             var leftStart = 0;
@@ -168,7 +168,7 @@
                 element.style.height = y4 - y3 + 'px';
             };
 
-            
+
 
             $container.mousedown(function (e) {
                 if (e.which === 1) {
@@ -188,7 +188,7 @@
                     y2 = e.pageY - offset.top;
                     reCalc();
                 }
-            }).mouseup(function (e) { 
+            }).mouseup(function (e) {
                 if (!hidden) {
                     var x3 = Math.min(x1, x2);
                     var x4 = Math.max(x1, x2);
@@ -250,7 +250,7 @@
             }*/
         }
     };
-		
+
     ko.bindingHandlers.dblClick = {
         init: function (element, valueAccessor, allBindings, bindingContext) {
             $(element).on('dblclick', function () { valueAccessor()(bindingContext) });
@@ -288,8 +288,8 @@
                 for (var i in menuActions) {
                     var action = menuActions[i];
                     var canDoAction = (!action.enableWhen) || action.enableWhen()
-                    if(canDoAction)
-                        $menu.append($('<li class="'+(canDoAction ? '' : 'disabled')+'" data-toggle="tooltip" data-placement="right" title="'+(action.hotkeys.join(', '))+'"></li>').append($('<a tabindex="-1" href="#"><i class="fa fa-fw ' + action.icon + '"></i> ' + action.text + '</a>').on('click', createFunc(action))));
+                    if (canDoAction)
+                        $menu.append($('<li class="' + (canDoAction ? '' : 'disabled') + '" data-toggle="tooltip" data-placement="right" title="' + (action.hotkeys.join(', ')) + '"></li>').append($('<a tabindex="-1" href="#"><i class="fa fa-fw ' + action.icon + '"></i> ' + action.text + '</a>').on('click', createFunc(action))));
                     $('[data-toggle="tooltip"]').tooltip();
                 }
 

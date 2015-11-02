@@ -59,14 +59,14 @@
                     self.deselectAll();
                     objs[0].isSelected(true);
                 }
-                
+
                 return;
             }
 
             if (Muzart.inputs.ctrl() && !Muzart.inputs.shift() && !Muzart.inputs.alt()) {
                 self.deselectAll();
             }
-            
+
             $.each(objs, function (i, obj) {
                 if (Muzart.inputs.ctrl() && Muzart.inputs.alt()) {
                     obj.isSelected(false);
@@ -105,7 +105,7 @@
         };
 
         self.cutSelection = function (element) {
-            
+
             self.copyBuffer = [];
             if (element && !element.type) {
                 self.copyBuffer.push(element.clone());
@@ -116,7 +116,7 @@
                 });
             }
             self.deleteSelection(element);
-                
+
             return false;
         };
 
